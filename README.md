@@ -1,5 +1,7 @@
 # Frontapp MCP Server
 
+[![smithery badge](https://smithery.ai/badge/@zqushair/frontapp-mcp)](https://smithery.ai/server/@zqushair/frontapp-mcp)
+
 A Model Context Protocol (MCP) server for integrating Large Language Models (LLMs) with Frontapp's customer communication platform.
 
 **[📚 View Full Documentation in /docs](/docs/README.md)**
@@ -39,6 +41,14 @@ The MCP server follows a modular architecture:
 - A publicly accessible URL for webhooks (for production use)
 
 ## Installation
+
+### Installing via Smithery
+
+To install frontapp-mcp for Claude Desktop automatically via [Smithery](https://smithery.ai/server/@zqushair/frontapp-mcp):
+
+```bash
+npx -y @smithery/cli install @zqushair/frontapp-mcp --client claude
+```
 
 For detailed installation instructions, see the [Installation Guide](/docs/installation.md).
 
