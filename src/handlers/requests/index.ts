@@ -1,7 +1,8 @@
 import { Server } from '@modelcontextprotocol/sdk/server/index.js';
-import { CallToolRequestSchema, ErrorCode, McpError } from '@modelcontextprotocol/sdk/types.js';
+import { CallToolRequestSchema, ErrorCode, ListToolsRequestSchema, McpError } from '@modelcontextprotocol/sdk/types.js';
 import { 
   FRONTAPP_TOOL_DEFINITIONS,
+  ToolResponse,
   GetConversationsArguments,
   GetConversationArguments,
   SendMessageArguments,
@@ -57,65 +58,82 @@ import { removeTagHandler } from './tags/removeTag.js';
  */
 export function setupRequestHandlers(server: Server): void {
   // Register the tool definitions
-  server.setRequestHandler(
-    { method: 'mcp.list_tools' },
-    async () => ({
-      tools: FRONTAPP_TOOL_DEFINITIONS,
-    })
-  );
+  server.setRequestHandler(ListToolsRequestSchema, async () => ({
+    tools: FRONTAPP_TOOL_DEFINITIONS,
+  }));
 
   // Register the tool handler
-  server.setRequestHandler(CallToolRequestSchema, async (request, extra) => {
+  server.setRequestHandler(CallToolRequestSchema, async (request) => {
     const { name, arguments: args } = request.params;
     
     try {
       // Route to the appropriate handler based on the tool name
+      let response: ToolResponse;
+      
       switch (name) {
         // Conversation handlers
         case 'get_conversations':
-          return await getConversationsHandler.handle(args as GetConversationsArguments);
+          response = await getConversationsHandler.handle(args as GetConversationsArguments);
+          break;
         case 'get_conversation':
-          return await getConversationHandler.handle(args as GetConversationArguments);
+          response = await getConversationHandler.handle(args as GetConversationArguments);
+          break;
         case 'send_message':
-          return await sendMessageHandler.handle(args as SendMessageArguments);
+          response = await sendMessageHandler.handle(args as SendMessageArguments);
+          break;
         case 'add_comment':
-          return await addCommentHandler.handle(args as AddCommentArguments);
+          response = await addCommentHandler.handle(args as AddCommentArguments);
+          break;
         case 'archive_conversation':
-          return await archiveConversationHandler.handle(args as ArchiveConversationArguments);
+          response = await archiveConversationHandler.handle(args as ArchiveConversationArguments);
+          break;
         case 'assign_conversation':
-          return await assignConversationHandler.handle(args as AssignConversationArguments);
+          response = await assignConversationHandler.handle(args as AssignConversationArguments);
+          break;
         
         // Contact handlers
         case 'get_contact':
-          return await getContactHandler.handle(args as GetContactArguments);
+          response = await getContactHandler.handle(args as GetContactArguments);
+          break;
         case 'create_contact':
-          return await createContactHandler.handle(args as CreateContactArguments);
+          response = await createContactHandler.handle(args as CreateContactArguments);
+          break;
         case 'update_contact':
-          return await updateContactHandler.handle(args as UpdateContactArguments);
+          response = await updateContactHandler.handle(args as UpdateContactArguments);
+          break;
         
         // Teammate handlers
         case 'get_teammates':
-          return await getTeammatesHandler.handle(args as GetTeammatesArguments);
+          response = await getTeammatesHandler.handle(args as GetTeammatesArguments);
+          break;
         case 'get_teammate':
-          return await getTeammateHandler.handle(args as GetTeammateArguments);
+          response = await getTeammateHandler.handle(args as GetTeammateArguments);
+          break;
         
         // Account handlers
         case 'get_accounts':
-          return await getAccountsHandler.handle(args as GetAccountsArguments);
+          response = await getAccountsHandler.handle(args as GetAccountsArguments);
+          break;
         case 'get_account':
-          return await getAccountHandler.handle(args as GetAccountArguments);
+          response = await getAccountHandler.handle(args as GetAccountArguments);
+          break;
         case 'create_account':
-          return await createAccountHandler.handle(args as CreateAccountArguments);
+          response = await createAccountHandler.handle(args as CreateAccountArguments);
+          break;
         case 'update_account':
-          return await updateAccountHandler.handle(args as UpdateAccountArguments);
+          response = await updateAccountHandler.handle(args as UpdateAccountArguments);
+          break;
         
         // Tag handlers
         case 'get_tags':
-          return await getTagsHandler.handle(args as GetTagsArguments);
+          response = await getTagsHandler.handle(args as GetTagsArguments);
+          break;
         case 'apply_tag':
-          return await applyTagHandler.handle(args as ApplyTagArguments);
+          response = await applyTagHandler.handle(args as ApplyTagArguments);
+          break;
         case 'remove_tag':
-          return await removeTagHandler.handle(args as RemoveTagArguments);
+          response = await removeTagHandler.handle(args as RemoveTagArguments);
+          break;
         
         default:
           throw new McpError(
@@ -123,6 +141,11 @@ export function setupRequestHandlers(server: Server): void {
             `Unknown tool: ${name}`
           );
       }
+      
+      // Return the response in the format expected by the MCP SDK
+      return {
+        result: response
+      };
     } catch (error: any) {
       // If the error is already an McpError, rethrow it
       if (error instanceof McpError) {
