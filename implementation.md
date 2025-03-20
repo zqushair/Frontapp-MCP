@@ -101,8 +101,47 @@ This document outlines the step-by-step implementation plan for the Frontapp MCP
 - [x] Implement client authentication
 - [x] Create request formatting utilities
 - [x] Implement response parsing
-- [ ] Add error handling and retries
+- [x] Add error handling and retries
 - [x] Create TypeScript interfaces for client usage
+
+The client-side integration includes a TypeScript client library (`src/frontapp-mcp-client.ts`) that LLMs can use to interact with the MCP server. The client library provides a simple and intuitive interface for calling the tools exposed by the MCP server.
+
+### Client Library Features
+
+- Type-safe methods for all available tools
+- Error handling with custom error handlers
+- Retry logic with exponential backoff for improved reliability
+- Comprehensive TypeScript interfaces for all request and response types
+
+### Example Client Usage
+
+```typescript
+import { FrontappMcpClient } from './frontapp-mcp-client.js';
+
+// Create a client instance
+const client = new FrontappMcpClient('http://localhost:3000');
+
+// Enable retries for better reliability
+client.enableRetries(3, 1000);
+
+// Set up custom error handling
+client.setErrorHandler((error: Error) => {
+  console.error('Error occurred:', error.message);
+});
+
+// Get a list of conversations
+const conversations = await client.getConversations({ 
+  status: 'open',
+  limit: 10
+});
+
+// Send a message to a conversation
+await client.sendMessage('cnv_123', 'Hello, how can I help you today?', {
+  tags: ['support', 'priority']
+});
+```
+
+A complete example of client usage is available in `src/examples/client-usage-example.ts`.
 
 ## Testing
 

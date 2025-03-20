@@ -93,6 +93,31 @@ Comprehensive documentation is available in the [/docs](/docs) directory:
 
 The Frontapp MCP integration exposes a set of tools that can be called by LLMs through the MCP protocol. For detailed information about the available tools and their parameters, see the [API Reference](/docs/api-reference.md).
 
+### Client Library
+
+The project includes a TypeScript client library (`src/frontapp-mcp-client.ts`) that LLMs can use to interact with the MCP server:
+
+```typescript
+import { FrontappMcpClient } from './frontapp-mcp-client.js';
+
+// Create a client instance
+const client = new FrontappMcpClient('http://localhost:3000');
+
+// Get a list of conversations
+const conversations = await client.getConversations({ status: 'open' });
+
+// Send a message to a conversation
+await client.sendMessage('cnv_123', 'Hello, how can I help you today?');
+```
+
+The client library provides:
+- Type-safe methods for all available tools
+- Error handling with custom error handlers
+- Retry logic with exponential backoff
+- Comprehensive TypeScript interfaces
+
+A complete example of client usage is available in `src/examples/client-usage-example.ts`.
+
 ### Webhook Integration
 
 The integration supports receiving and processing webhooks from Frontapp for real-time event notifications. For detailed information about webhook integration, see the [Webhook Integration Guide](/docs/webhook-integration.md).

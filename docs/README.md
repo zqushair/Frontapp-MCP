@@ -54,6 +54,48 @@ To get started with the Frontapp MCP integration, follow these steps:
 
 1. [Install and set up the integration](installation.md)
 2. [Explore the available API endpoints](api-reference.md)
-3. [Set up webhook integration for real-time updates](webhook-integration.md)
+3. [Use the client library to interact with the MCP server](#client-library)
+4. [Set up webhook integration for real-time updates](webhook-integration.md)
 
 If you're interested in contributing to the project, check out the [Development Guide](development-guide.md).
+
+### Client Library
+
+The Frontapp MCP integration includes a TypeScript client library (`src/frontapp-mcp-client.ts`) that LLMs can use to interact with the MCP server. The client library provides a simple and intuitive interface for calling the tools exposed by the MCP server.
+
+#### Client Library Features
+
+- Type-safe methods for all available tools
+- Error handling with custom error handlers
+- Retry logic with exponential backoff for improved reliability
+- Comprehensive TypeScript interfaces for all request and response types
+
+#### Example Client Usage
+
+```typescript
+import { FrontappMcpClient } from './frontapp-mcp-client.js';
+
+// Create a client instance
+const client = new FrontappMcpClient('http://localhost:3000');
+
+// Enable retries for better reliability
+client.enableRetries(3, 1000);
+
+// Set up custom error handling
+client.setErrorHandler((error: Error) => {
+  console.error('Error occurred:', error.message);
+});
+
+// Get a list of conversations
+const conversations = await client.getConversations({ 
+  status: 'open',
+  limit: 10
+});
+
+// Send a message to a conversation
+await client.sendMessage('cnv_123', 'Hello, how can I help you today?', {
+  tags: ['support', 'priority']
+});
+```
+
+A complete example of client usage is available in `src/examples/client-usage-example.ts`.
