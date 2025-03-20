@@ -293,6 +293,194 @@ export const FRONTAPP_TOOL_DEFINITIONS: ToolDefinition[] = [
     }
   },
   
+  // Contact tools
+  {
+    name: 'get_contact',
+    description: 'Get details of a specific contact',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        contact_id: { type: 'string', description: 'ID of the contact' }
+      },
+      required: ['contact_id']
+    }
+  },
+  {
+    name: 'create_contact',
+    description: 'Create a new contact in Frontapp',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        name: { type: 'string', description: 'Name of the contact' },
+        description: { type: 'string', description: 'Description of the contact' },
+        handles: { 
+          type: 'array', 
+          description: 'Contact handles (email, phone, etc.)',
+          items: { 
+            type: 'object',
+            properties: {
+              handle: { type: 'string', description: 'Handle value (e.g., email address)' },
+              source: { type: 'string', description: 'Handle source (e.g., email)' }
+            },
+            required: ['handle', 'source']
+          }
+        },
+        links: { 
+          type: 'array', 
+          description: 'Links associated with the contact',
+          items: { 
+            type: 'object',
+            properties: {
+              name: { type: 'string', description: 'Link name' },
+              url: { type: 'string', description: 'Link URL' }
+            },
+            required: ['name', 'url']
+          }
+        },
+        custom_fields: { 
+          type: 'object', 
+          description: 'Custom fields for the contact' 
+        }
+      },
+      required: ['handles']
+    }
+  },
+  {
+    name: 'update_contact',
+    description: 'Update an existing contact in Frontapp',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        contact_id: { type: 'string', description: 'ID of the contact to update' },
+        name: { type: 'string', description: 'Name of the contact' },
+        description: { type: 'string', description: 'Description of the contact' },
+        handles: { 
+          type: 'array', 
+          description: 'Contact handles (email, phone, etc.)',
+          items: { 
+            type: 'object',
+            properties: {
+              handle: { type: 'string', description: 'Handle value (e.g., email address)' },
+              source: { type: 'string', description: 'Handle source (e.g., email)' }
+            },
+            required: ['handle', 'source']
+          }
+        },
+        links: { 
+          type: 'array', 
+          description: 'Links associated with the contact',
+          items: { 
+            type: 'object',
+            properties: {
+              name: { type: 'string', description: 'Link name' },
+              url: { type: 'string', description: 'Link URL' }
+            },
+            required: ['name', 'url']
+          }
+        },
+        custom_fields: { 
+          type: 'object', 
+          description: 'Custom fields for the contact' 
+        }
+      },
+      required: ['contact_id']
+    }
+  },
+  
+  // Teammate tools
+  {
+    name: 'get_teammates',
+    description: 'Get a list of teammates from Frontapp',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        limit: { type: 'number', description: 'Maximum number of results to return' },
+        page_token: { type: 'string', description: 'Token for pagination' }
+      }
+    }
+  },
+  {
+    name: 'get_teammate',
+    description: 'Get details of a specific teammate',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        teammate_id: { type: 'string', description: 'ID of the teammate' }
+      },
+      required: ['teammate_id']
+    }
+  },
+  
+  // Account tools
+  {
+    name: 'get_accounts',
+    description: 'Get a list of accounts from Frontapp',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        q: { type: 'string', description: 'Search query' },
+        limit: { type: 'number', description: 'Maximum number of results to return' },
+        page_token: { type: 'string', description: 'Token for pagination' }
+      }
+    }
+  },
+  {
+    name: 'get_account',
+    description: 'Get details of a specific account',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        account_id: { type: 'string', description: 'ID of the account' }
+      },
+      required: ['account_id']
+    }
+  },
+  {
+    name: 'create_account',
+    description: 'Create a new account in Frontapp',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        name: { type: 'string', description: 'Name of the account' },
+        description: { type: 'string', description: 'Description of the account' },
+        domains: { 
+          type: 'array', 
+          description: 'Domains associated with the account',
+          items: { type: 'string' }
+        },
+        external_id: { type: 'string', description: 'External ID for the account' },
+        custom_fields: { 
+          type: 'object', 
+          description: 'Custom fields for the account' 
+        }
+      },
+      required: ['name', 'domains']
+    }
+  },
+  {
+    name: 'update_account',
+    description: 'Update an existing account in Frontapp',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        account_id: { type: 'string', description: 'ID of the account to update' },
+        name: { type: 'string', description: 'Name of the account' },
+        description: { type: 'string', description: 'Description of the account' },
+        domains: { 
+          type: 'array', 
+          description: 'Domains associated with the account',
+          items: { type: 'string' }
+        },
+        external_id: { type: 'string', description: 'External ID for the account' },
+        custom_fields: { 
+          type: 'object', 
+          description: 'Custom fields for the account' 
+        }
+      },
+      required: ['account_id']
+    }
+  },
+  
   // Tag tools
   {
     name: 'get_tags',
@@ -328,7 +516,5 @@ export const FRONTAPP_TOOL_DEFINITIONS: ToolDefinition[] = [
       },
       required: ['conversation_id', 'tag_id']
     }
-  },
-  
-  // Add more tool definitions as needed...
+  }
 ];
