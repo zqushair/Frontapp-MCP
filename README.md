@@ -2,6 +2,8 @@
 
 A Model Context Protocol (MCP) server for integrating Large Language Models (LLMs) with Frontapp's customer communication platform.
 
+**[📚 View Full Documentation in /docs](/docs/README.md)**
+
 ## Overview
 
 This project implements an MCP server that acts as a bridge between LLMs and Frontapp's API. It enables LLMs to access and manipulate Frontapp data (conversations, contacts, tags, etc.) and automate Frontapp workflows using natural language commands.
@@ -38,10 +40,14 @@ The MCP server follows a modular architecture:
 
 ## Installation
 
+For detailed installation instructions, see the [Installation Guide](/docs/installation.md).
+
+Quick start:
+
 1. Clone the repository:
    ```bash
-   git clone https://github.com/yourusername/frontapp-mcp.git
-   cd frontapp-mcp
+   git clone https://github.com/zqushair/Frontapp-MCP.git
+   cd Frontapp-MCP
    ```
 
 2. Install dependencies:
@@ -49,103 +55,62 @@ The MCP server follows a modular architecture:
    npm install
    ```
 
-3. Create a `.env` file based on the `.env.example` template:
+3. Create and configure the `.env` file:
    ```bash
    cp .env.example .env
+   # Edit the .env file with your Frontapp API credentials
    ```
 
-4. Edit the `.env` file with your Frontapp API credentials and other settings:
-   ```
-   FRONTAPP_API_KEY=your_frontapp_api_key_here
-   WEBHOOK_SECRET=your_webhook_secret_here
-   WEBHOOK_BASE_URL=https://your-webhook-url.com
-   PORT=3000
-   LOG_LEVEL=info
-   ```
-
-5. Build the project:
+4. Build and start the project:
    ```bash
    npm run build
+   npm start
    ```
+
+## Documentation
+
+Comprehensive documentation is available in the [/docs](/docs) directory:
+
+- [📖 Main Documentation](/docs/README.md) - Overview and introduction
+- [🔧 Installation Guide](/docs/installation.md) - Detailed setup instructions
+- [📚 API Reference](/docs/api-reference.md) - Available tools and endpoints
+- [🔔 Webhook Integration](/docs/webhook-integration.md) - Real-time event processing
+- [💻 Development Guide](/docs/development-guide.md) - Contributing to the project
 
 ## Usage
 
-### Starting the Server
+### API Usage
 
-```bash
-npm start
-```
-
-This will start the MCP server, which will listen for requests from LLMs and webhooks from Frontapp.
-
-### Client-Side Integration
-
-The project includes a TypeScript client library (`frontapp-mcp-client.ts`) that can be used to interact with the MCP server from LLM applications.
-
-```typescript
-import { FrontappMcpClient } from './frontapp-mcp-client';
-
-// Create a client instance
-const client = new FrontappMcpClient('http://localhost:3000');
-
-// Get a list of conversations
-const conversations = await client.getConversations({ status: 'open' });
-
-// Get details of a specific conversation
-const conversation = await client.getConversation('cnv_123456');
-
-// Send a message to a conversation
-await client.sendMessage('cnv_123456', 'Hello, how can I help you today?');
-```
+The Frontapp MCP integration exposes a set of tools that can be called by LLMs through the MCP protocol. For detailed information about the available tools and their parameters, see the [API Reference](/docs/api-reference.md).
 
 ### Webhook Integration
 
-To receive webhooks from Frontapp:
-
-1. Set up a publicly accessible URL for your webhook endpoint (e.g., using ngrok for development)
-2. Configure the `WEBHOOK_BASE_URL` in your `.env` file
-3. Subscribe to webhook events in Frontapp's settings, pointing to your webhook URL
-4. Set a webhook secret in Frontapp and configure the same secret in your `.env` file
+The integration supports receiving and processing webhooks from Frontapp for real-time event notifications. For detailed information about webhook integration, see the [Webhook Integration Guide](/docs/webhook-integration.md).
 
 ## Development
 
-### Project Structure
+For detailed development information, see the [Development Guide](/docs/development-guide.md).
 
-```
-frontapp-mcp/
-├── src/
-│   ├── config/              # Configuration files
-│   ├── models/              # Data models
-│   ├── handlers/            # Request and webhook handlers
-│   │   ├── requests/        # LLM request handlers
-│   │   └── webhooks/        # Frontapp webhook handlers
-│   ├── clients/             # API clients
-│   │   └── frontapp/        # Frontapp API client
-│   ├── middleware/          # Middleware components
-│   ├── utils/               # Utility functions
-│   └── index.ts             # Entry point
-├── tests/                   # Test files
-├── .env.example             # Example environment variables
-├── tsconfig.json            # TypeScript configuration
-├── package.json             # Project dependencies
-└── README.md                # Project documentation
-```
-
-### Running in Development Mode
+### Quick Development Commands
 
 ```bash
+# Start development server with hot reloading
 npm run dev
+
+# Run tests
+npm run test:api
+npm run test:conversations
+npm run test:tags
+npm run test:contacts
+npm run test:webhooks
+
+# Lint and format code
+npm run lint
+npm run format
+
+# Build for production
+npm run build
 ```
-
-This will start the server in development mode with hot reloading.
-
-### Testing
-
-```bash
-npm test
-```
-
-This will run the test suite.
 
 ## Security Considerations
 
@@ -161,7 +126,7 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 ## Contributing
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+Contributions are welcome! Please see the [Development Guide](/docs/development-guide.md) for information on how to contribute to the project.
 
 ## Acknowledgements
 
