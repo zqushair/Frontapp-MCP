@@ -42,7 +42,7 @@ export abstract class BaseRequestHandler<T extends ToolArguments> implements Req
     try {
       // Validate the arguments
       this.validateArgs(args);
-      
+
       // Execute the request
       return await this.execute(args);
     } catch (error: any) {

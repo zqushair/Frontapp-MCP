@@ -18,7 +18,7 @@ export class GetTeammateHandler extends BaseRequestHandler<GetTeammateArguments>
     if (!args.teammate_id) {
       throw new Error('teammate_id is required');
     }
-    
+
     if (typeof args.teammate_id !== 'string') {
       throw new Error('teammate_id must be a string');
     }
@@ -34,7 +34,7 @@ export class GetTeammateHandler extends BaseRequestHandler<GetTeammateArguments>
       // Call the Frontapp API to get the teammate
       const response = await frontappClient.getTeammate(args.teammate_id);
       const teammate = response.data as Teammate;
-      
+
       // Format the response for the LLM
       const formattedTeammate = {
         id: teammate.id,
@@ -49,7 +49,7 @@ export class GetTeammateHandler extends BaseRequestHandler<GetTeammateArguments>
         inboxes: teammate._links.related.inboxes,
         conversations: teammate._links.related.conversations,
       };
-      
+
       // Create a success response with the formatted teammate
       return this.createSuccessResponse(formattedTeammate);
     } catch (error: any) {

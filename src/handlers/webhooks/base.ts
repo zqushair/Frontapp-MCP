@@ -43,13 +43,13 @@ export abstract class BaseWebhookHandler implements WebhookHandler {
     try {
       // Validate the payload
       this.validatePayload(payload);
-      
+
       // Process the payload
       await this.process(payload, server);
     } catch (error: any) {
       // Log the error
       console.error(`[Webhook Error] ${error.message}`);
-      
+
       // Rethrow the error
       throw error;
     }

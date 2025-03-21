@@ -30,7 +30,7 @@ describe('ConversationCreatedHandler', () => {
         assignee: { id: 'tea_123', email: 'agent@example.com' },
         recipient: { handle: 'customer@example.com' },
         created_at: 1616161616,
-      }
+      },
     };
 
     // Mock API responses
@@ -61,7 +61,7 @@ describe('ConversationCreatedHandler', () => {
       payload: {
         id: 'cnv_123',
         subject: 'New support request',
-      }
+      },
     };
 
     // Mock API error
@@ -69,7 +69,9 @@ describe('ConversationCreatedHandler', () => {
     (frontappClient.getConversation as jest.Mock).mockRejectedValue(new Error(errorMessage));
 
     // Call the handler
-    await expect(conversationCreatedHandler.handle(webhookPayload, mockServer)).rejects.toThrow(errorMessage);
+    await expect(conversationCreatedHandler.handle(webhookPayload, mockServer)).rejects.toThrow(
+      errorMessage
+    );
 
     // Verify API call was attempted
     expect(frontappClient.getConversation).toHaveBeenCalledWith('cnv_123');

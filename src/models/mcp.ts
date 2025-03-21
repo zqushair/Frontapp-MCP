@@ -208,15 +208,15 @@ export const FRONTAPP_TOOL_DEFINITIONS: ToolDefinition[] = [
         inbox_id: { type: 'string', description: 'Filter by inbox ID' },
         tag_id: { type: 'string', description: 'Filter by tag ID' },
         assignee_id: { type: 'string', description: 'Filter by assignee ID' },
-        status: { 
-          type: 'string', 
+        status: {
+          type: 'string',
           description: 'Filter by conversation status',
-          enum: ['open', 'archived', 'spam', 'deleted']
+          enum: ['open', 'archived', 'spam', 'deleted'],
         },
         limit: { type: 'number', description: 'Maximum number of results to return' },
-        page_token: { type: 'string', description: 'Token for pagination' }
-      }
-    }
+        page_token: { type: 'string', description: 'Token for pagination' },
+      },
+    },
   },
   {
     name: 'get_conversation',
@@ -224,10 +224,10 @@ export const FRONTAPP_TOOL_DEFINITIONS: ToolDefinition[] = [
     inputSchema: {
       type: 'object',
       properties: {
-        conversation_id: { type: 'string', description: 'ID of the conversation' }
+        conversation_id: { type: 'string', description: 'ID of the conversation' },
       },
-      required: ['conversation_id']
-    }
+      required: ['conversation_id'],
+    },
   },
   {
     name: 'send_message',
@@ -243,18 +243,21 @@ export const FRONTAPP_TOOL_DEFINITIONS: ToolDefinition[] = [
           type: 'object',
           description: 'Additional options',
           properties: {
-            tags: { 
-              type: 'array', 
+            tags: {
+              type: 'array',
               description: 'Tags to apply to the conversation',
-              items: { type: 'string' }
+              items: { type: 'string' },
             },
-            archive: { type: 'boolean', description: 'Whether to archive the conversation after sending' },
-            draft: { type: 'boolean', description: 'Whether to create a draft instead of sending' }
-          }
-        }
+            archive: {
+              type: 'boolean',
+              description: 'Whether to archive the conversation after sending',
+            },
+            draft: { type: 'boolean', description: 'Whether to create a draft instead of sending' },
+          },
+        },
       },
-      required: ['conversation_id', 'content']
-    }
+      required: ['conversation_id', 'content'],
+    },
   },
   {
     name: 'add_comment',
@@ -264,10 +267,10 @@ export const FRONTAPP_TOOL_DEFINITIONS: ToolDefinition[] = [
       properties: {
         conversation_id: { type: 'string', description: 'ID of the conversation' },
         body: { type: 'string', description: 'Comment body' },
-        author_id: { type: 'string', description: 'ID of the comment author' }
+        author_id: { type: 'string', description: 'ID of the comment author' },
       },
-      required: ['conversation_id', 'body', 'author_id']
-    }
+      required: ['conversation_id', 'body', 'author_id'],
+    },
   },
   {
     name: 'archive_conversation',
@@ -275,10 +278,10 @@ export const FRONTAPP_TOOL_DEFINITIONS: ToolDefinition[] = [
     inputSchema: {
       type: 'object',
       properties: {
-        conversation_id: { type: 'string', description: 'ID of the conversation' }
+        conversation_id: { type: 'string', description: 'ID of the conversation' },
       },
-      required: ['conversation_id']
-    }
+      required: ['conversation_id'],
+    },
   },
   {
     name: 'assign_conversation',
@@ -287,12 +290,15 @@ export const FRONTAPP_TOOL_DEFINITIONS: ToolDefinition[] = [
       type: 'object',
       properties: {
         conversation_id: { type: 'string', description: 'ID of the conversation' },
-        assignee_id: { type: 'string', description: 'ID of the teammate to assign the conversation to' }
+        assignee_id: {
+          type: 'string',
+          description: 'ID of the teammate to assign the conversation to',
+        },
       },
-      required: ['conversation_id', 'assignee_id']
-    }
+      required: ['conversation_id', 'assignee_id'],
+    },
   },
-  
+
   // Contact tools
   {
     name: 'get_contact',
@@ -300,10 +306,10 @@ export const FRONTAPP_TOOL_DEFINITIONS: ToolDefinition[] = [
     inputSchema: {
       type: 'object',
       properties: {
-        contact_id: { type: 'string', description: 'ID of the contact' }
+        contact_id: { type: 'string', description: 'ID of the contact' },
       },
-      required: ['contact_id']
-    }
+      required: ['contact_id'],
+    },
   },
   {
     name: 'create_contact',
@@ -313,37 +319,37 @@ export const FRONTAPP_TOOL_DEFINITIONS: ToolDefinition[] = [
       properties: {
         name: { type: 'string', description: 'Name of the contact' },
         description: { type: 'string', description: 'Description of the contact' },
-        handles: { 
-          type: 'array', 
+        handles: {
+          type: 'array',
           description: 'Contact handles (email, phone, etc.)',
-          items: { 
+          items: {
             type: 'object',
             properties: {
               handle: { type: 'string', description: 'Handle value (e.g., email address)' },
-              source: { type: 'string', description: 'Handle source (e.g., email)' }
+              source: { type: 'string', description: 'Handle source (e.g., email)' },
             },
-            required: ['handle', 'source']
-          }
+            required: ['handle', 'source'],
+          },
         },
-        links: { 
-          type: 'array', 
+        links: {
+          type: 'array',
           description: 'Links associated with the contact',
-          items: { 
+          items: {
             type: 'object',
             properties: {
               name: { type: 'string', description: 'Link name' },
-              url: { type: 'string', description: 'Link URL' }
+              url: { type: 'string', description: 'Link URL' },
             },
-            required: ['name', 'url']
-          }
+            required: ['name', 'url'],
+          },
         },
-        custom_fields: { 
-          type: 'object', 
-          description: 'Custom fields for the contact' 
-        }
+        custom_fields: {
+          type: 'object',
+          description: 'Custom fields for the contact',
+        },
       },
-      required: ['handles']
-    }
+      required: ['handles'],
+    },
   },
   {
     name: 'update_contact',
@@ -354,39 +360,39 @@ export const FRONTAPP_TOOL_DEFINITIONS: ToolDefinition[] = [
         contact_id: { type: 'string', description: 'ID of the contact to update' },
         name: { type: 'string', description: 'Name of the contact' },
         description: { type: 'string', description: 'Description of the contact' },
-        handles: { 
-          type: 'array', 
+        handles: {
+          type: 'array',
           description: 'Contact handles (email, phone, etc.)',
-          items: { 
+          items: {
             type: 'object',
             properties: {
               handle: { type: 'string', description: 'Handle value (e.g., email address)' },
-              source: { type: 'string', description: 'Handle source (e.g., email)' }
+              source: { type: 'string', description: 'Handle source (e.g., email)' },
             },
-            required: ['handle', 'source']
-          }
+            required: ['handle', 'source'],
+          },
         },
-        links: { 
-          type: 'array', 
+        links: {
+          type: 'array',
           description: 'Links associated with the contact',
-          items: { 
+          items: {
             type: 'object',
             properties: {
               name: { type: 'string', description: 'Link name' },
-              url: { type: 'string', description: 'Link URL' }
+              url: { type: 'string', description: 'Link URL' },
             },
-            required: ['name', 'url']
-          }
+            required: ['name', 'url'],
+          },
         },
-        custom_fields: { 
-          type: 'object', 
-          description: 'Custom fields for the contact' 
-        }
+        custom_fields: {
+          type: 'object',
+          description: 'Custom fields for the contact',
+        },
       },
-      required: ['contact_id']
-    }
+      required: ['contact_id'],
+    },
   },
-  
+
   // Teammate tools
   {
     name: 'get_teammates',
@@ -395,9 +401,9 @@ export const FRONTAPP_TOOL_DEFINITIONS: ToolDefinition[] = [
       type: 'object',
       properties: {
         limit: { type: 'number', description: 'Maximum number of results to return' },
-        page_token: { type: 'string', description: 'Token for pagination' }
-      }
-    }
+        page_token: { type: 'string', description: 'Token for pagination' },
+      },
+    },
   },
   {
     name: 'get_teammate',
@@ -405,12 +411,12 @@ export const FRONTAPP_TOOL_DEFINITIONS: ToolDefinition[] = [
     inputSchema: {
       type: 'object',
       properties: {
-        teammate_id: { type: 'string', description: 'ID of the teammate' }
+        teammate_id: { type: 'string', description: 'ID of the teammate' },
       },
-      required: ['teammate_id']
-    }
+      required: ['teammate_id'],
+    },
   },
-  
+
   // Account tools
   {
     name: 'get_accounts',
@@ -420,9 +426,9 @@ export const FRONTAPP_TOOL_DEFINITIONS: ToolDefinition[] = [
       properties: {
         q: { type: 'string', description: 'Search query' },
         limit: { type: 'number', description: 'Maximum number of results to return' },
-        page_token: { type: 'string', description: 'Token for pagination' }
-      }
-    }
+        page_token: { type: 'string', description: 'Token for pagination' },
+      },
+    },
   },
   {
     name: 'get_account',
@@ -430,10 +436,10 @@ export const FRONTAPP_TOOL_DEFINITIONS: ToolDefinition[] = [
     inputSchema: {
       type: 'object',
       properties: {
-        account_id: { type: 'string', description: 'ID of the account' }
+        account_id: { type: 'string', description: 'ID of the account' },
       },
-      required: ['account_id']
-    }
+      required: ['account_id'],
+    },
   },
   {
     name: 'create_account',
@@ -443,19 +449,19 @@ export const FRONTAPP_TOOL_DEFINITIONS: ToolDefinition[] = [
       properties: {
         name: { type: 'string', description: 'Name of the account' },
         description: { type: 'string', description: 'Description of the account' },
-        domains: { 
-          type: 'array', 
+        domains: {
+          type: 'array',
           description: 'Domains associated with the account',
-          items: { type: 'string' }
+          items: { type: 'string' },
         },
         external_id: { type: 'string', description: 'External ID for the account' },
-        custom_fields: { 
-          type: 'object', 
-          description: 'Custom fields for the account' 
-        }
+        custom_fields: {
+          type: 'object',
+          description: 'Custom fields for the account',
+        },
       },
-      required: ['name', 'domains']
-    }
+      required: ['name', 'domains'],
+    },
   },
   {
     name: 'update_account',
@@ -466,21 +472,21 @@ export const FRONTAPP_TOOL_DEFINITIONS: ToolDefinition[] = [
         account_id: { type: 'string', description: 'ID of the account to update' },
         name: { type: 'string', description: 'Name of the account' },
         description: { type: 'string', description: 'Description of the account' },
-        domains: { 
-          type: 'array', 
+        domains: {
+          type: 'array',
           description: 'Domains associated with the account',
-          items: { type: 'string' }
+          items: { type: 'string' },
         },
         external_id: { type: 'string', description: 'External ID for the account' },
-        custom_fields: { 
-          type: 'object', 
-          description: 'Custom fields for the account' 
-        }
+        custom_fields: {
+          type: 'object',
+          description: 'Custom fields for the account',
+        },
       },
-      required: ['account_id']
-    }
+      required: ['account_id'],
+    },
   },
-  
+
   // Tag tools
   {
     name: 'get_tags',
@@ -489,9 +495,9 @@ export const FRONTAPP_TOOL_DEFINITIONS: ToolDefinition[] = [
       type: 'object',
       properties: {
         limit: { type: 'number', description: 'Maximum number of results to return' },
-        page_token: { type: 'string', description: 'Token for pagination' }
-      }
-    }
+        page_token: { type: 'string', description: 'Token for pagination' },
+      },
+    },
   },
   {
     name: 'apply_tag',
@@ -500,10 +506,10 @@ export const FRONTAPP_TOOL_DEFINITIONS: ToolDefinition[] = [
       type: 'object',
       properties: {
         conversation_id: { type: 'string', description: 'ID of the conversation' },
-        tag_id: { type: 'string', description: 'ID of the tag to apply' }
+        tag_id: { type: 'string', description: 'ID of the tag to apply' },
       },
-      required: ['conversation_id', 'tag_id']
-    }
+      required: ['conversation_id', 'tag_id'],
+    },
   },
   {
     name: 'remove_tag',
@@ -512,12 +518,12 @@ export const FRONTAPP_TOOL_DEFINITIONS: ToolDefinition[] = [
       type: 'object',
       properties: {
         conversation_id: { type: 'string', description: 'ID of the conversation' },
-        tag_id: { type: 'string', description: 'ID of the tag to remove' }
+        tag_id: { type: 'string', description: 'ID of the tag to remove' },
       },
-      required: ['conversation_id', 'tag_id']
-    }
+      required: ['conversation_id', 'tag_id'],
+    },
   },
-  
+
   // Inbox tools
   {
     name: 'get_inboxes',
@@ -526,9 +532,9 @@ export const FRONTAPP_TOOL_DEFINITIONS: ToolDefinition[] = [
       type: 'object',
       properties: {
         limit: { type: 'number', description: 'Maximum number of results to return' },
-        page_token: { type: 'string', description: 'Token for pagination' }
-      }
-    }
+        page_token: { type: 'string', description: 'Token for pagination' },
+      },
+    },
   },
   {
     name: 'get_inbox',
@@ -536,9 +542,9 @@ export const FRONTAPP_TOOL_DEFINITIONS: ToolDefinition[] = [
     inputSchema: {
       type: 'object',
       properties: {
-        inbox_id: { type: 'string', description: 'ID of the inbox' }
+        inbox_id: { type: 'string', description: 'ID of the inbox' },
       },
-      required: ['inbox_id']
-    }
-  }
+      required: ['inbox_id'],
+    },
+  },
 ];

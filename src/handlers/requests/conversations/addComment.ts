@@ -17,25 +17,25 @@ export class AddCommentHandler extends BaseRequestHandler<AddCommentArguments> {
     if (!args.conversation_id) {
       throw new Error('conversation_id is required');
     }
-    
+
     if (typeof args.conversation_id !== 'string') {
       throw new Error('conversation_id must be a string');
     }
-    
+
     // Validate body
     if (!args.body) {
       throw new Error('body is required');
     }
-    
+
     if (typeof args.body !== 'string') {
       throw new Error('body must be a string');
     }
-    
+
     // Validate author_id
     if (!args.author_id) {
       throw new Error('author_id is required');
     }
-    
+
     if (typeof args.author_id !== 'string') {
       throw new Error('author_id must be a string');
     }
@@ -53,7 +53,7 @@ export class AddCommentHandler extends BaseRequestHandler<AddCommentArguments> {
         author_id: args.author_id,
         body: args.body,
       });
-      
+
       // Create a success response
       return this.createSuccessResponse({
         message: `Comment added to conversation ${args.conversation_id} successfully`,

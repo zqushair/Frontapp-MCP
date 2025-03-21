@@ -17,16 +17,16 @@ export class AssignConversationHandler extends BaseRequestHandler<AssignConversa
     if (!args.conversation_id) {
       throw new Error('conversation_id is required');
     }
-    
+
     if (typeof args.conversation_id !== 'string') {
       throw new Error('conversation_id must be a string');
     }
-    
+
     // Validate assignee_id
     if (!args.assignee_id) {
       throw new Error('assignee_id is required');
     }
-    
+
     if (typeof args.assignee_id !== 'string') {
       throw new Error('assignee_id must be a string');
     }
@@ -41,7 +41,7 @@ export class AssignConversationHandler extends BaseRequestHandler<AssignConversa
     try {
       // Call the Frontapp API to assign the conversation
       await frontappClient.assignConversation(args.conversation_id, args.assignee_id);
-      
+
       // Create a success response
       return this.createSuccessResponse({
         message: `Conversation ${args.conversation_id} assigned to teammate ${args.assignee_id} successfully`,

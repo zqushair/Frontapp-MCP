@@ -18,7 +18,7 @@ export class GetTagsHandler extends BaseRequestHandler<GetTagsArguments> {
     if (args.limit !== undefined && (typeof args.limit !== 'number' || args.limit <= 0)) {
       throw new Error('Limit must be a positive number');
     }
-    
+
     // Validate page_token if provided
     if (args.page_token !== undefined && typeof args.page_token !== 'string') {
       throw new Error('page_token must be a string');
@@ -34,12 +34,12 @@ export class GetTagsHandler extends BaseRequestHandler<GetTagsArguments> {
     try {
       // Call the Frontapp API to get tags
       const response = await frontappClient.getTags();
-      
+
       // Extract the tags from the response
       const data = response.data as FrontappPaginatedResponse<Tag>;
-      
+
       // Format the response for the LLM
-      const formattedTags = data._results.map(tag => ({
+      const formattedTags = data._results.map((tag) => ({
         id: tag.id,
         name: tag.name,
         highlight: tag.highlight,
@@ -47,7 +47,7 @@ export class GetTagsHandler extends BaseRequestHandler<GetTagsArguments> {
         created_at: new Date(tag.created_at * 1000).toISOString(),
         updated_at: new Date(tag.updated_at * 1000).toISOString(),
       }));
-      
+
       // Create a success response with the formatted tags
       return this.createSuccessResponse({
         tags: formattedTags,

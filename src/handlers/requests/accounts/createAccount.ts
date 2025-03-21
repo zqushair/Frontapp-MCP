@@ -18,32 +18,32 @@ export class CreateAccountHandler extends BaseRequestHandler<CreateAccountArgume
     if (!args.name) {
       throw new Error('name is required');
     }
-    
+
     if (typeof args.name !== 'string') {
       throw new Error('name must be a string');
     }
-    
+
     // Validate domains
     if (!args.domains || !Array.isArray(args.domains) || args.domains.length === 0) {
       throw new Error('domains is required and must be a non-empty array');
     }
-    
+
     for (const domain of args.domains) {
       if (typeof domain !== 'string') {
         throw new Error('Each domain must be a string');
       }
     }
-    
+
     // Validate description if provided
     if (args.description !== undefined && typeof args.description !== 'string') {
       throw new Error('description must be a string');
     }
-    
+
     // Validate external_id if provided
     if (args.external_id !== undefined && typeof args.external_id !== 'string') {
       throw new Error('external_id must be a string');
     }
-    
+
     // Validate custom_fields if provided
     if (args.custom_fields !== undefined && typeof args.custom_fields !== 'object') {
       throw new Error('custom_fields must be an object');
@@ -62,24 +62,24 @@ export class CreateAccountHandler extends BaseRequestHandler<CreateAccountArgume
         name: args.name,
         domains: args.domains,
       } as any;
-      
+
       // Add optional fields if provided
       if (args.description) {
         accountData.description = args.description;
       }
-      
+
       if (args.external_id) {
         accountData.external_id = args.external_id;
       }
-      
+
       if (args.custom_fields) {
         accountData.custom_fields = args.custom_fields;
       }
-      
+
       // Call the Frontapp API to create the account
       const response = await frontappClient.createAccount(accountData);
       const account = response.data as Account;
-      
+
       // Format the response for the LLM
       const formattedAccount = {
         id: account.id,
@@ -90,7 +90,7 @@ export class CreateAccountHandler extends BaseRequestHandler<CreateAccountArgume
         custom_fields: account.custom_fields,
         created_at: new Date(account.created_at * 1000).toISOString(),
       };
-      
+
       // Create a success response with the formatted account
       return this.createSuccessResponse({
         account: formattedAccount,

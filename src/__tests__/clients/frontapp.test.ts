@@ -24,7 +24,7 @@ describe('FrontappClient', () => {
     it('should configure retries with custom settings', () => {
       // Call the configureRetries method
       frontappClient.configureRetries(5, 2000);
-      
+
       // Verify the method was called with the correct parameters
       expect(frontappClient.configureRetries).toHaveBeenCalledWith(5, 2000);
     });

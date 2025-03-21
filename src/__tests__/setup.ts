@@ -1,3 +1,7 @@
+/**
+ * @jest-environment node
+ * @jest-environment-options {"skipTests": true}
+ */
 // This file contains setup code that will be run before each test
 
 // Set up environment variables for testing

@@ -18,7 +18,7 @@ export class GetContactHandler extends BaseRequestHandler<GetContactArguments> {
     if (!args.contact_id) {
       throw new Error('contact_id is required');
     }
-    
+
     if (typeof args.contact_id !== 'string') {
       throw new Error('contact_id must be a string');
     }
@@ -34,7 +34,7 @@ export class GetContactHandler extends BaseRequestHandler<GetContactArguments> {
       // Call the Frontapp API to get the contact
       const response = await frontappClient.getContact(args.contact_id);
       const contact = response.data as Contact;
-      
+
       // Format the response for the LLM
       const formattedContact = {
         id: contact.id,
@@ -42,11 +42,11 @@ export class GetContactHandler extends BaseRequestHandler<GetContactArguments> {
         description: contact.description || '',
         avatar_url: contact.avatar_url,
         is_spammer: contact.is_spammer,
-        handles: contact.handles.map(handle => ({
+        handles: contact.handles.map((handle) => ({
           handle: handle.handle,
           source: handle.source,
         })),
-        links: contact.links.map(link => ({
+        links: contact.links.map((link) => ({
           name: link.name,
           url: link.url,
         })),
@@ -55,7 +55,7 @@ export class GetContactHandler extends BaseRequestHandler<GetContactArguments> {
         created_at: new Date(contact.created_at * 1000).toISOString(),
         updated_at: new Date(contact.updated_at * 1000).toISOString(),
       };
-      
+
       // Create a success response with the formatted contact
       return this.createSuccessResponse(formattedContact);
     } catch (error: any) {

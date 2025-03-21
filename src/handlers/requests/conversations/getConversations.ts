@@ -18,9 +18,12 @@ export class GetConversationsHandler extends BaseRequestHandler<GetConversations
     if (args.limit !== undefined && (typeof args.limit !== 'number' || args.limit <= 0)) {
       throw new Error('Limit must be a positive number');
     }
-    
+
     // Validate status if provided
-    if (args.status !== undefined && !['open', 'archived', 'spam', 'deleted'].includes(args.status)) {
+    if (
+      args.status !== undefined &&
+      !['open', 'archived', 'spam', 'deleted'].includes(args.status)
+    ) {
       throw new Error('Status must be one of: open, archived, spam, deleted');
     }
   }
@@ -34,33 +37,37 @@ export class GetConversationsHandler extends BaseRequestHandler<GetConversations
     try {
       // Call the Frontapp API to get conversations
       const response = await frontappClient.getConversations(args);
-      
+
       // Extract the conversations from the response
       const data = response.data as FrontappPaginatedResponse<Conversation>;
-      
+
       // Format the response for the LLM
-      const formattedConversations = data._results.map(conversation => ({
+      const formattedConversations = data._results.map((conversation) => ({
         id: conversation.id,
         subject: conversation.subject || '(No subject)',
         status: conversation.status,
-        assignee: conversation.assignee ? {
-          id: conversation.assignee.id,
-          name: `${conversation.assignee.first_name} ${conversation.assignee.last_name}`,
-        } : null,
-        tags: conversation.tags.map(tag => ({
+        assignee: conversation.assignee
+          ? {
+              id: conversation.assignee.id,
+              name: `${conversation.assignee.first_name} ${conversation.assignee.last_name}`,
+            }
+          : null,
+        tags: conversation.tags.map((tag) => ({
           id: tag.id,
           name: tag.name,
         })),
         created_at: new Date(conversation.created_at * 1000).toISOString(),
-        last_message: conversation.last_message ? {
-          author: conversation.last_message.author.is_teammate ? 
-            `${conversation.last_message.author.first_name || ''} ${conversation.last_message.author.last_name || ''}`.trim() : 
-            conversation.last_message.author.email || 'Unknown',
-          text: conversation.last_message.text,
-          created_at: new Date(conversation.last_message.created_at * 1000).toISOString(),
-        } : null,
+        last_message: conversation.last_message
+          ? {
+              author: conversation.last_message.author.is_teammate
+                ? `${conversation.last_message.author.first_name || ''} ${conversation.last_message.author.last_name || ''}`.trim()
+                : conversation.last_message.author.email || 'Unknown',
+              text: conversation.last_message.text,
+              created_at: new Date(conversation.last_message.created_at * 1000).toISOString(),
+            }
+          : null,
       }));
-      
+
       // Create a success response with the formatted conversations
       return this.createSuccessResponse({
         conversations: formattedConversations,

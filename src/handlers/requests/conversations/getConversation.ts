@@ -18,7 +18,7 @@ export class GetConversationHandler extends BaseRequestHandler<GetConversationAr
     if (!args.conversation_id) {
       throw new Error('conversation_id is required');
     }
-    
+
     if (typeof args.conversation_id !== 'string') {
       throw new Error('conversation_id must be a string');
     }
@@ -34,42 +34,44 @@ export class GetConversationHandler extends BaseRequestHandler<GetConversationAr
       // Call the Frontapp API to get the conversation
       const conversationResponse = await frontappClient.getConversation(args.conversation_id);
       const conversation = conversationResponse.data as Conversation;
-      
+
       // Get the messages for this conversation
       const messagesResponse = await frontappClient.getConversationMessages(args.conversation_id);
       const messages = messagesResponse.data._results as Message[];
-      
+
       // Format the response for the LLM
       const formattedConversation = {
         id: conversation.id,
         subject: conversation.subject || '(No subject)',
         status: conversation.status,
-        assignee: conversation.assignee ? {
-          id: conversation.assignee.id,
-          name: `${conversation.assignee.first_name} ${conversation.assignee.last_name}`,
-        } : null,
-        tags: conversation.tags.map(tag => ({
+        assignee: conversation.assignee
+          ? {
+              id: conversation.assignee.id,
+              name: `${conversation.assignee.first_name} ${conversation.assignee.last_name}`,
+            }
+          : null,
+        tags: conversation.tags.map((tag) => ({
           id: tag.id,
           name: tag.name,
         })),
         created_at: new Date(conversation.created_at * 1000).toISOString(),
         is_private: conversation.is_private,
-        messages: messages.map(message => ({
+        messages: messages.map((message) => ({
           id: message.id,
           type: message.type,
           is_inbound: message.is_inbound,
           created_at: new Date(message.created_at * 1000).toISOString(),
-          author: message.author.is_teammate ? 
-            `${message.author.first_name || ''} ${message.author.last_name || ''}`.trim() : 
-            message.author.email || 'Unknown',
+          author: message.author.is_teammate
+            ? `${message.author.first_name || ''} ${message.author.last_name || ''}`.trim()
+            : message.author.email || 'Unknown',
           text: message.text,
-          recipients: message.recipients.map(recipient => ({
+          recipients: message.recipients.map((recipient) => ({
             handle: recipient.handle,
             role: recipient.role,
           })),
         })),
       };
-      
+
       // Create a success response with the formatted conversation
       return this.createSuccessResponse(formattedConversation);
     } catch (error: any) {

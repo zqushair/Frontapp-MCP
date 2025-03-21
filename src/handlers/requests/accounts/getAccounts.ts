@@ -18,12 +18,12 @@ export class GetAccountsHandler extends BaseRequestHandler<GetAccountsArguments>
     if (args.limit !== undefined && (typeof args.limit !== 'number' || args.limit <= 0)) {
       throw new Error('Limit must be a positive number');
     }
-    
+
     // Validate page_token if provided
     if (args.page_token !== undefined && typeof args.page_token !== 'string') {
       throw new Error('page_token must be a string');
     }
-    
+
     // Validate search query if provided
     if (args.q !== undefined && typeof args.q !== 'string') {
       throw new Error('q must be a string');
@@ -39,12 +39,12 @@ export class GetAccountsHandler extends BaseRequestHandler<GetAccountsArguments>
     try {
       // Call the Frontapp API to get accounts
       const response = await frontappClient.getAccounts(args);
-      
+
       // Extract the accounts from the response
       const data = response.data as FrontappPaginatedResponse<Account>;
-      
+
       // Format the response for the LLM
-      const formattedAccounts = data._results.map(account => ({
+      const formattedAccounts = data._results.map((account) => ({
         id: account.id,
         name: account.name,
         description: account.description || '',
@@ -54,7 +54,7 @@ export class GetAccountsHandler extends BaseRequestHandler<GetAccountsArguments>
         created_at: new Date(account.created_at * 1000).toISOString(),
         updated_at: new Date(account.updated_at * 1000).toISOString(),
       }));
-      
+
       // Create a success response with the formatted accounts
       return this.createSuccessResponse({
         accounts: formattedAccounts,

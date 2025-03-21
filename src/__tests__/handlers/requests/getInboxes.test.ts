@@ -74,9 +74,11 @@ describe('GetInboxesHandler', () => {
     await getInboxesHandler.handle(args);
 
     // Verify the parameters were passed correctly
-    expect(frontappClient.getInboxes).toHaveBeenCalledWith(expect.objectContaining({
-      limit: 10,
-      page_token: 'page_token',
-    }));
+    expect(frontappClient.getInboxes).toHaveBeenCalledWith(
+      expect.objectContaining({
+        limit: 10,
+        page_token: 'page_token',
+      })
+    );
   });
 });

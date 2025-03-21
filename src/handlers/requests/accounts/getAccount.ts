@@ -18,7 +18,7 @@ export class GetAccountHandler extends BaseRequestHandler<GetAccountArguments> {
     if (!args.account_id) {
       throw new Error('account_id is required');
     }
-    
+
     if (typeof args.account_id !== 'string') {
       throw new Error('account_id must be a string');
     }
@@ -34,7 +34,7 @@ export class GetAccountHandler extends BaseRequestHandler<GetAccountArguments> {
       // Call the Frontapp API to get the account
       const response = await frontappClient.getAccount(args.account_id);
       const account = response.data as Account;
-      
+
       // Format the response for the LLM
       const formattedAccount = {
         id: account.id,
@@ -48,7 +48,7 @@ export class GetAccountHandler extends BaseRequestHandler<GetAccountArguments> {
         contacts_url: account._links.related.contacts,
         conversations_url: account._links.related.conversations,
       };
-      
+
       // Create a success response with the formatted account
       return this.createSuccessResponse(formattedAccount);
     } catch (error: any) {

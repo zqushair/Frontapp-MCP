@@ -18,7 +18,7 @@ export class GetTeammatesHandler extends BaseRequestHandler<GetTeammatesArgument
     if (args.limit !== undefined && (typeof args.limit !== 'number' || args.limit <= 0)) {
       throw new Error('Limit must be a positive number');
     }
-    
+
     // Validate page_token if provided
     if (args.page_token !== undefined && typeof args.page_token !== 'string') {
       throw new Error('page_token must be a string');
@@ -34,12 +34,12 @@ export class GetTeammatesHandler extends BaseRequestHandler<GetTeammatesArgument
     try {
       // Call the Frontapp API to get teammates
       const response = await frontappClient.getTeammates();
-      
+
       // Extract the teammates from the response
       const data = response.data as FrontappPaginatedResponse<Teammate>;
-      
+
       // Format the response for the LLM
-      const formattedTeammates = data._results.map(teammate => ({
+      const formattedTeammates = data._results.map((teammate) => ({
         id: teammate.id,
         email: teammate.email,
         username: teammate.username,
@@ -50,7 +50,7 @@ export class GetTeammatesHandler extends BaseRequestHandler<GetTeammatesArgument
         is_blocked: teammate.is_blocked,
         custom_fields: teammate.custom_fields,
       }));
-      
+
       // Create a success response with the formatted teammates
       return this.createSuccessResponse({
         teammates: formattedTeammates,

@@ -1,5 +1,5 @@
 /** @type {import('ts-jest').JestConfigWithTsJest} */
-module.exports = {
+export default {
   preset: 'ts-jest',
   testEnvironment: 'node',
   setupFilesAfterEnv: ['<rootDir>/src/__tests__/setup.ts'],
@@ -17,6 +17,7 @@ module.exports = {
   extensionsToTreatAsEsm: ['.ts'],
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
   testMatch: ['**/__tests__/**/*.ts?(x)', '**/?(*.)+(spec|test).ts?(x)'],
+  testPathIgnorePatterns: ['/node_modules/', '/dist/', '/src/__tests__/setup.ts'],
   collectCoverage: true,
   coverageDirectory: 'coverage',
   collectCoverageFrom: [

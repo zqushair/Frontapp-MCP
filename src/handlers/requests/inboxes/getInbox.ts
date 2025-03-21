@@ -26,10 +26,10 @@ export class GetInboxHandler extends BaseRequestHandler<GetInboxArguments> {
   protected async execute(args: GetInboxArguments): Promise<ToolResponse> {
     // Extract the inbox ID
     const { inbox_id } = args;
-    
+
     // Call the Frontapp API
     const response = await frontappClient.getInbox(inbox_id);
-    
+
     // Return the response
     return this.createSuccessResponse(response.data);
   }

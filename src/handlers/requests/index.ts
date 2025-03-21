@@ -1,6 +1,11 @@
 import { Server } from '@modelcontextprotocol/sdk/server/index.js';
-import { CallToolRequestSchema, ErrorCode, ListToolsRequestSchema, McpError } from '@modelcontextprotocol/sdk/types.js';
-import { 
+import {
+  CallToolRequestSchema,
+  ErrorCode,
+  ListToolsRequestSchema,
+  McpError,
+} from '@modelcontextprotocol/sdk/types.js';
+import {
   FRONTAPP_TOOL_DEFINITIONS,
   ToolResponse,
   GetConversationsArguments,
@@ -22,7 +27,7 @@ import {
   ApplyTagArguments,
   RemoveTagArguments,
   GetInboxesArguments,
-  GetInboxArguments
+  GetInboxArguments,
 } from '../../models/mcp.js';
 
 // Import conversation handlers
@@ -71,11 +76,11 @@ export function setupRequestHandlers(server: Server): void {
   // Register the tool handler
   server.setRequestHandler(CallToolRequestSchema, async (request) => {
     const { name, arguments: args } = request.params;
-    
+
     try {
       // Route to the appropriate handler based on the tool name
       let response: ToolResponse;
-      
+
       switch (name) {
         // Conversation handlers
         case 'get_conversations':
@@ -96,7 +101,7 @@ export function setupRequestHandlers(server: Server): void {
         case 'assign_conversation':
           response = await assignConversationHandler.handle(args as AssignConversationArguments);
           break;
-        
+
         // Contact handlers
         case 'get_contact':
           response = await getContactHandler.handle(args as GetContactArguments);
@@ -107,7 +112,7 @@ export function setupRequestHandlers(server: Server): void {
         case 'update_contact':
           response = await updateContactHandler.handle(args as UpdateContactArguments);
           break;
-        
+
         // Teammate handlers
         case 'get_teammates':
           response = await getTeammatesHandler.handle(args as GetTeammatesArguments);
@@ -115,7 +120,7 @@ export function setupRequestHandlers(server: Server): void {
         case 'get_teammate':
           response = await getTeammateHandler.handle(args as GetTeammateArguments);
           break;
-        
+
         // Account handlers
         case 'get_accounts':
           response = await getAccountsHandler.handle(args as GetAccountsArguments);
@@ -129,7 +134,7 @@ export function setupRequestHandlers(server: Server): void {
         case 'update_account':
           response = await updateAccountHandler.handle(args as UpdateAccountArguments);
           break;
-        
+
         // Tag handlers
         case 'get_tags':
           response = await getTagsHandler.handle(args as GetTagsArguments);
@@ -140,7 +145,7 @@ export function setupRequestHandlers(server: Server): void {
         case 'remove_tag':
           response = await removeTagHandler.handle(args as RemoveTagArguments);
           break;
-        
+
         // Inbox handlers
         case 'get_inboxes':
           response = await getInboxesHandler.handle(args as GetInboxesArguments);
@@ -148,31 +153,25 @@ export function setupRequestHandlers(server: Server): void {
         case 'get_inbox':
           response = await getInboxHandler.handle(args as GetInboxArguments);
           break;
-        
+
         default:
-          throw new McpError(
-            ErrorCode.MethodNotFound,
-            `Unknown tool: ${name}`
-          );
+          throw new McpError(ErrorCode.MethodNotFound, `Unknown tool: ${name}`);
       }
-      
+
       // Return the response in the format expected by the MCP SDK
       return {
-        result: response
+        result: response,
       };
     } catch (error: any) {
       // If the error is already an McpError, rethrow it
       if (error instanceof McpError) {
         throw error;
       }
-      
+
       // Otherwise, wrap it in an McpError
-      throw new McpError(
-        ErrorCode.InternalError,
-        `Error executing tool ${name}: ${error.message}`
-      );
+      throw new McpError(ErrorCode.InternalError, `Error executing tool ${name}: ${error.message}`);
     }
   });
-  
+
   console.log('Request handlers set up successfully');
 }
