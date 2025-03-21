@@ -74,16 +74,16 @@ This document outlines the step-by-step implementation plan for the Frontapp MCP
 - [x] Implement conversation webhook handlers:
   - [x] ConversationCreatedHandler
   - [x] ConversationUpdatedHandler
-  - [ ] ConversationTaggedHandler
-  - [ ] ConversationUntaggedHandler
-  - [ ] ConversationAssignedHandler
-  - [ ] ConversationUnassignedHandler
+- [x] ConversationTaggedHandler
+- [x] ConversationUntaggedHandler
+- [x] ConversationAssignedHandler
+- [x] ConversationUnassignedHandler
 - [x] Implement message webhook handlers:
-  - [ ] MessageCreatedHandler
+- [x] MessageCreatedHandler
   - [x] MessageReceivedHandler
-- [ ] Implement contact webhook handlers:
-  - [ ] ContactCreatedHandler
-  - [ ] ContactUpdatedHandler
+- [x] Implement contact webhook handlers:
+  - [x] ContactCreatedHandler
+  - [x] ContactUpdatedHandler
 - [ ] Set up webhook subscription management
 
 ## Security Implementation
