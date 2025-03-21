@@ -516,5 +516,29 @@ export const FRONTAPP_TOOL_DEFINITIONS: ToolDefinition[] = [
       },
       required: ['conversation_id', 'tag_id']
     }
+  },
+  
+  // Inbox tools
+  {
+    name: 'get_inboxes',
+    description: 'Get a list of inboxes from Frontapp',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        limit: { type: 'number', description: 'Maximum number of results to return' },
+        page_token: { type: 'string', description: 'Token for pagination' }
+      }
+    }
+  },
+  {
+    name: 'get_inbox',
+    description: 'Get details of a specific inbox',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        inbox_id: { type: 'string', description: 'ID of the inbox' }
+      },
+      required: ['inbox_id']
+    }
   }
 ];

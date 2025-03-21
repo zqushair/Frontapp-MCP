@@ -55,9 +55,9 @@ This document outlines the step-by-step implementation plan for the Frontapp MCP
   - [x] GetTagsHandler
   - [x] ApplyTagHandler
   - [x] RemoveTagHandler
-- [ ] Create inbox handlers:
-  - [ ] GetInboxesHandler
-  - [ ] GetInboxDetailsHandler
+- [x] Create inbox handlers:
+  - [x] GetInboxesHandler
+  - [x] GetInboxHandler
 - [x] Create user handlers:
   - [x] GetTeammatesHandler
   - [x] GetTeammateHandler

@@ -168,6 +168,15 @@ export class FrontappMcpClient {
     });
   }
   
+  // Inbox methods
+  async getInboxes(params: { limit?: number; page_token?: string } = {}) {
+    return this.callTool('get_inboxes', params);
+  }
+  
+  async getInbox(inboxId: string) {
+    return this.callTool('get_inbox', { inbox_id: inboxId });
+  }
+  
   // Error handling and retries
   setErrorHandler(handler: (error: Error) => void) {
     this.client.interceptors.response.use(

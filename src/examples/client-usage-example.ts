@@ -46,6 +46,17 @@ async function main() {
     const teammates = await client.getTeammates();
     console.log(`Retrieved ${teammates.result._results.length} teammates`);
     
+    // Example 6: Get a list of inboxes
+    console.log('Getting inboxes...');
+    const inboxes = await client.getInboxes();
+    console.log(`Retrieved ${inboxes.result._results.length} inboxes`);
+    
+    // Example 7: Get details of a specific inbox
+    // Replace 'inb_123' with an actual inbox ID
+    console.log('Getting inbox details...');
+    const inbox = await client.getInbox('inb_123');
+    console.log('Inbox name:', inbox.result.name);
+    
   } catch (error) {
     console.error('An error occurred:', error);
   }

@@ -20,7 +20,9 @@ import {
   UpdateAccountArguments,
   GetTagsArguments,
   ApplyTagArguments,
-  RemoveTagArguments
+  RemoveTagArguments,
+  GetInboxesArguments,
+  GetInboxArguments
 } from '../../models/mcp.js';
 
 // Import conversation handlers
@@ -50,6 +52,10 @@ import { updateAccountHandler } from './accounts/updateAccount.js';
 import { getTagsHandler } from './tags/getTags.js';
 import { applyTagHandler } from './tags/applyTag.js';
 import { removeTagHandler } from './tags/removeTag.js';
+
+// Import inbox handlers
+import { getInboxesHandler } from './inboxes/getInboxes.js';
+import { getInboxHandler } from './inboxes/getInbox.js';
 
 /**
  * Set up request handlers for the MCP server
@@ -133,6 +139,14 @@ export function setupRequestHandlers(server: Server): void {
           break;
         case 'remove_tag':
           response = await removeTagHandler.handle(args as RemoveTagArguments);
+          break;
+        
+        // Inbox handlers
+        case 'get_inboxes':
+          response = await getInboxesHandler.handle(args as GetInboxesArguments);
+          break;
+        case 'get_inbox':
+          response = await getInboxHandler.handle(args as GetInboxArguments);
           break;
         
         default:
