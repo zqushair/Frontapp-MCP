@@ -21,6 +21,8 @@ The server supports real-time updates and event-driven automation using webhooks
 - **User Management**: Retrieve user details
 - **Webhook Integration**: Receive and process real-time events from Frontapp
 - **Secure Authentication**: Verify webhook signatures and handle API authentication
+- **Secure Credential Storage**: Store sensitive information with AES-256 encryption
+- **HTTPS Support**: Secure communications with TLS/SSL encryption
 
 ## Architecture
 
@@ -85,6 +87,8 @@ Comprehensive documentation is available in the [/docs](/docs) directory:
 - [🔧 Installation Guide](/docs/installation.md) - Detailed setup instructions
 - [📚 API Reference](/docs/api-reference.md) - Available tools and endpoints
 - [🔔 Webhook Integration](/docs/webhook-integration.md) - Real-time event processing
+- [🔒 Credential Storage Guide](/docs/credential-storage-guide.md) - Secure credential management
+- [🔐 HTTPS Setup Guide](/docs/https-setup-guide.md) - Secure communications setup
 - [💻 Development Guide](/docs/development-guide.md) - Contributing to the project
 
 ## Usage
@@ -149,9 +153,12 @@ npm run build
 
 ## Security Considerations
 
-- Store API credentials securely using environment variables
+- Store API credentials securely using the credential manager with AES-256 encryption
+- Generate strong encryption keys using the provided script: `npm run generate-key`
+- Enable HTTPS for all communications using the built-in HTTPS support
+- Generate self-signed certificates for development: `npm run generate-cert`
+- Use certificates from trusted certificate authorities for production
 - Verify webhook signatures to ensure they come from Frontapp
-- Use HTTPS for all communications in production
 - Implement rate limiting to prevent abuse
 - Validate all incoming data to prevent injection attacks
 
