@@ -81,3 +81,9 @@ This document lists the bugs and inconsistencies identified during the code revi
 - [x] **Missing Performance Tests**: The application lacks performance tests for critical components.
   - *Related changes*: [x] Implement performance tests for key functionality.
   - *Notes*: Created performance tests for the API server in tests/integration/api-performance.test.ts. The tests measure the performance of the API server under load, including concurrent request handling, rate limiting, error handling, and response time consistency. The tests provide valuable insights into the application's performance characteristics and help identify potential bottlenecks.
+
+## Docker Build Issues
+
+- [x] **TypeScript Type Errors in Webhook Handlers**: The webhook handlers for message events had TypeScript type errors that prevented the Docker build from completing successfully.
+  - *Related changes*: [x] Add type assertions for payload ID and conversation_id.
+  - *Notes*: Fixed TypeScript errors in src/handlers/webhooks/messages/messageCreated.ts and src/handlers/webhooks/messages/messageReceived.ts by adding type assertions to the payload ID and conversation_id variables. Also improved optional chaining for accessing author properties. These changes ensured that TypeScript correctly handles potentially undefined values, allowing the Docker build to complete successfully.

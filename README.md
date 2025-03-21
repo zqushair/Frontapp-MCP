@@ -149,7 +149,34 @@ npm run format
 
 # Build for production
 npm run build
+
+# Check TypeScript types without compiling
+npm run typecheck
 ```
+
+## Docker Deployment
+
+The project includes a Dockerfile for containerized deployment. This multi-stage build process creates an optimized production image.
+
+### Building the Docker Image
+
+```bash
+# Build the Docker image
+docker build -t frontapp-mcp .
+
+# Run the Docker container
+docker run -p 3000:3000 --env-file .env frontapp-mcp
+```
+
+### Docker Build Troubleshooting
+
+If you encounter TypeScript errors during the Docker build process, they need to be fixed before the build can succeed. Common issues include:
+
+1. Type errors in webhook handlers (see the [TypeScript Type Safety](/docs/development-guide.md#typescript-type-safety) section in the Development Guide)
+2. Missing type assertions for potentially undefined values
+3. Improper handling of optional properties
+
+Always run `npm run typecheck` or `npm run build` locally before building the Docker image to catch and fix these issues early.
 
 ## Security Considerations
 

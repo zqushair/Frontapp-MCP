@@ -442,6 +442,67 @@ Contributions to the project are welcome! Here's how to contribute:
 
 Please follow the existing code style and include tests for new functionality.
 
+## TypeScript Type Safety
+
+### Common Type Issues and Solutions
+
+When working with webhook payloads and API responses, you may encounter TypeScript type errors related to potentially undefined values. Here are some common issues and their solutions:
+
+#### Handling Potentially Undefined Values
+
+TypeScript's strict type checking will flag errors when you try to use a value that might be undefined. This is particularly common when working with webhook payloads or API responses where certain fields might be optional.
+
+For example, in webhook handlers like `messageCreated.ts` and `messageReceived.ts`, we encountered errors like:
+
+```
+error TS2345: Argument of type 'string | undefined' is not assignable to parameter of type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+```
+
+This occurred because TypeScript couldn't guarantee that `payload.payload.id` and `payload.payload.conversation_id` were strings, even though we validated their existence in the `validatePayload` method.
+
+**Solution**: Use type assertions when you've already validated the existence of a value:
+
+```typescript
+// Before (causes TypeScript error)
+const messageId = payload.payload.id;
+const conversationId = payload.payload.conversation_id;
+
+// After (fixed with type assertion)
+const messageId = payload.payload.id as string;
+const conversationId = payload.payload.conversation_id as string;
+```
+
+#### Handling Optional Properties
+
+When accessing nested properties that might be undefined, use optional chaining (`?.`) to safely access them:
+
+```typescript
+// Before (might cause runtime error if author is undefined)
+console.log(`Author: ${message.author.first_name} ${message.author.last_name}`);
+
+// After (safely handles undefined author)
+console.log(`Author: ${message.author?.first_name || ''} ${message.author?.last_name || ''}`);
+```
+
+### Docker Build and TypeScript
+
+When building the Docker image, the TypeScript compiler runs during the build process (`npm run build`). Any TypeScript errors will cause the build to fail, as we experienced with:
+
+```
+ERROR: failed to solve: process "/bin/sh -c npm run build" did not complete successfully: exit code: 2
+```
+
+Always ensure your code passes TypeScript type checking before building the Docker image:
+
+```bash
+# Check for TypeScript errors without compiling
+npm run typecheck
+
+# Or compile TypeScript to check for errors
+npm run build
+```
+
 ## Resources
 
 - [Frontapp API Documentation](https://dev.frontapp.com/reference/overview)
