@@ -20,6 +20,7 @@
     "test:webhook-mock": "node --experimental-modules tests/test-webhook-mock.js",
     "test:handlers": "node --experimental-modules tests/test-handlers.js",
     "webhooks": "ts-node src/scripts/manageWebhooks.ts",
+    "generate-key": "ts-node src/scripts/generateEncryptionKey.ts",
     "lint": "eslint \"src/**/*.ts\"",
     "lint:fix": "eslint \"src/**/*.ts\" --fix",
     "format": "prettier --write \"src/**/*.ts\"",
@@ -36,6 +37,8 @@
   "license": "MIT",
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.0.0",
+    "ajv": "^8.17.1",
+    "ajv-formats": "^3.0.1",
     "axios": "^1.6.0",
     "cors": "^2.8.5",
     "dotenv": "^16.3.1",
@@ -49,6 +52,7 @@
     "winston": "^3.11.0"
   },
   "devDependencies": {
+    "@types/ajv": "^1.0.4",
     "@types/cors": "^2.8.17",
     "@types/express": "^4.17.21",
     "@types/helmet": "^4.0.0",
