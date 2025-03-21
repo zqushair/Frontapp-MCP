@@ -6,6 +6,59 @@ This document provides detailed information about the available API endpoints in
 
 The Frontapp MCP integration exposes a set of tools that can be called by LLMs through the MCP protocol. Each tool corresponds to a specific Frontapp API operation.
 
+The integration provides two ways to access these tools:
+
+1. **MCP Protocol**: LLMs can call tools directly through the MCP protocol.
+2. **RESTful API**: Tools can be accessed through a RESTful API provided by the API Gateway.
+
+## API Gateway
+
+The API Gateway provides a RESTful interface to the MCP tools. For detailed information about the API Gateway, see the [API Gateway Guide](api-gateway-guide.md).
+
+### API Gateway Endpoints
+
+#### Tools API
+
+```
+GET /tools
+```
+
+Returns a list of all available MCP tools with their descriptions and input schemas.
+
+```
+POST /tools/{name}
+```
+
+Executes a specific MCP tool with the provided arguments.
+
+#### Health API
+
+```
+GET /health
+```
+
+Returns basic health information.
+
+```
+GET /health/metrics
+```
+
+Returns detailed system and application metrics.
+
+```
+GET /health/logs
+```
+
+Returns recent logs (disabled in production).
+
+#### API Documentation
+
+```
+GET /api-docs
+```
+
+Interactive API documentation using Swagger/OpenAPI.
+
 ## Tool Format
 
 All tools follow a standard format:

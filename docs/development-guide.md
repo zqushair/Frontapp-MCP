@@ -52,6 +52,10 @@ frontapp-mcp/
 ├── src/
 │   ├── config/              # Configuration files
 │   ├── api/                 # API Gateway implementation
+│   │   ├── health.ts        # Health check endpoints
+│   │   ├── index.ts         # Main API Gateway setup
+│   │   ├── swagger.ts       # Swagger/OpenAPI documentation
+│   │   └── tools.ts         # Tools API endpoints
 │   ├── models/              # Data models
 │   ├── handlers/            # Request and webhook handlers
 │   │   ├── requests/        # LLM request handlers
@@ -59,7 +63,12 @@ frontapp-mcp/
 │   ├── clients/             # API clients
 │   │   └── frontapp/        # Frontapp API client
 │   ├── middleware/          # Middleware components
+│   │   ├── requestLogger.ts # Request logging middleware
+│   │   ├── security.ts      # Security middleware
+│   │   └── webhookAuth.ts   # Webhook authentication
 │   ├── utils/               # Utility functions
+│   │   ├── logger.ts        # Logging utilities
+│   │   └── monitoring.ts    # Monitoring utilities
 │   └── index.ts             # Entry point
 ├── tests/                   # Test files
 ├── docs/                    # Documentation
@@ -77,7 +86,9 @@ frontapp-mcp/
 - **src/models/**: Data models for the MCP server and Frontapp API.
 - **src/handlers/requests/**: Request handlers for the MCP server.
 - **src/handlers/webhooks/**: Webhook handlers for Frontapp webhooks.
-- **src/middleware/**: Middleware components, such as webhook authentication.
+- **src/middleware/**: Middleware components for the API Gateway and webhook server.
+- **src/api/**: API Gateway implementation, including health checks, Swagger documentation, and tool endpoints.
+- **src/utils/**: Utility functions, including logging and monitoring.
 
 ## Rate Limiting and Retry Logic
 

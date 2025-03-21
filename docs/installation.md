@@ -47,8 +47,15 @@ WEBHOOK_BASE_URL=https://your-webhook-url.com
 # Server configuration
 PORT=3000
 
-# Logging
+# Logging and Monitoring
 LOG_LEVEL=info
+METRICS_INTERVAL=60000
+
+# API Gateway configuration
+API_KEY=your_api_key_here
+CORS_ORIGINS=*
+RATE_LIMIT_WINDOW_MS=900000
+RATE_LIMIT_MAX=100
 ```
 
 - `FRONTAPP_API_KEY`: Your Frontapp API key. You can obtain this from the Frontapp developer settings.
@@ -56,6 +63,11 @@ LOG_LEVEL=info
 - `WEBHOOK_BASE_URL`: The publicly accessible URL where your webhook server will be hosted.
 - `PORT`: The port on which the webhook server will run.
 - `LOG_LEVEL`: The logging level (e.g., debug, info, warn, error).
+- `METRICS_INTERVAL`: How often to log metrics in milliseconds (default: 60000).
+- `API_KEY`: API key for authenticating requests to the API Gateway. Generate a random string for this.
+- `CORS_ORIGINS`: Comma-separated list of allowed origins for CORS (default: `*`).
+- `RATE_LIMIT_WINDOW_MS`: Time window for rate limiting in milliseconds (default: 900000 - 15 minutes).
+- `RATE_LIMIT_MAX`: Maximum number of requests per window (default: 100).
 
 ### 4. Build the Project
 
