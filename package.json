@@ -21,6 +21,7 @@
     "test:handlers": "node --experimental-modules tests/test-handlers.js",
     "webhooks": "ts-node src/scripts/manageWebhooks.ts",
     "generate-key": "ts-node src/scripts/generateEncryptionKey.ts",
+    "generate-cert": "ts-node src/scripts/generateCertificate.ts",
     "lint": "eslint \"src/**/*.ts\"",
     "lint:fix": "eslint \"src/**/*.ts\" --fix",
     "format": "prettier --write \"src/**/*.ts\"",

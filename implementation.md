@@ -89,7 +89,7 @@ This document outlines the step-by-step implementation plan for the Frontapp MCP
 ## Security Implementation
 
 - [x] Implement secure credential storage
-- [ ] Set up HTTPS for all communications
+- [x] Set up HTTPS for all communications
 - [ ] Create input validation middleware
 - [ ] Implement rate limiting
 - [ ] Add webhook payload validation
