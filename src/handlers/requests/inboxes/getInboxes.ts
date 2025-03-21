@@ -30,7 +30,7 @@ export class GetInboxesHandler extends BaseRequestHandler<GetInboxesArguments> {
     if (page_token) params.page_token = page_token;
     
     // Call the Frontapp API
-    const response = await frontappClient.getInboxes();
+    const response = await frontappClient.getInboxes(params);
     
     // Return the response
     return this.createSuccessResponse(response.data);

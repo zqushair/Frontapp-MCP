@@ -246,8 +246,8 @@ export class FrontappClient {
   }
   
   // Inbox methods
-  async getInboxes(): Promise<AxiosResponse<FrontappPaginatedResponse<any>>> {
-    return this.rateLimitedRequest(() => this.client.get('/inboxes'));
+  async getInboxes(params?: Record<string, any>): Promise<AxiosResponse<FrontappPaginatedResponse<any>>> {
+    return this.rateLimitedRequest(() => this.client.get('/inboxes', { params }));
   }
   
   async getInbox(inboxId: string): Promise<AxiosResponse<any>> {
