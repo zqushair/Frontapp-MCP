@@ -14,6 +14,7 @@ Welcome to the documentation for the Frontapp MCP (Model Context Protocol) integ
   - [Input Validation](input-validation-guide.md)
   - [Rate Limiting](rate-limiting-guide.md)
   - [Webhook Validation](webhook-validation-guide.md)
+  - [Security Testing](security-testing-guide.md)
 - [Development Guide](development-guide.md)
 
 ## Introduction
@@ -139,3 +140,9 @@ For detailed information, see the [Rate Limiting Guide](rate-limiting-guide.md).
 The integration includes a webhook validation middleware that validates webhook payloads against schemas. This helps ensure that webhook payloads meet the expected structure and prevents invalid data from being processed.
 
 For detailed information, see the [Webhook Validation Guide](webhook-validation-guide.md).
+
+### Security Testing
+
+The integration includes a comprehensive security testing suite that tests all security features of the integration. This suite helps ensure that the integration is secure and that security features are working as expected.
+
+For detailed information, see the [Security Testing Guide](security-testing-guide.md).
