@@ -37,8 +37,8 @@ export class MessageCreatedHandler extends BaseWebhookHandler {
 
     try {
       // Get the message ID and conversation ID from the payload
-      const messageId = payload.payload.id;
-      const conversationId = payload.payload.conversation_id;
+      const messageId = payload.payload.id as string;
+      const conversationId = payload.payload.conversation_id as string;
 
       // Fetch the conversation details
       const conversationResponse = await frontappClient.getConversation(conversationId);
@@ -61,7 +61,7 @@ export class MessageCreatedHandler extends BaseWebhookHandler {
         isInbound: message.is_inbound,
         authorName: message.author?.first_name 
           ? `${message.author.first_name} ${message.author.last_name || ''}`
-          : message.author?.username || 'Unknown',
+          : (message.author?.username || 'Unknown'),
         messageBlurb: message.blurb
       });
 

@@ -36,8 +36,8 @@ export class MessageReceivedHandler extends BaseWebhookHandler {
 
     try {
       // Get the message ID and conversation ID from the payload
-      const messageId = payload.payload.id;
-      const conversationId = payload.payload.conversation_id;
+      const messageId = payload.payload.id as string;
+      const conversationId = payload.payload.conversation_id as string;
 
       // Fetch the conversation details from Frontapp
       const conversationResponse = await frontappClient.getConversation(conversationId);
@@ -62,7 +62,7 @@ export class MessageReceivedHandler extends BaseWebhookHandler {
         console.log(`[Webhook] Message type: ${message.type}`);
         console.log(`[Webhook] Is inbound: ${message.is_inbound}`);
         console.log(
-          `[Webhook] Author: ${message.author.first_name || ''} ${message.author.last_name || ''}`
+          `[Webhook] Author: ${message.author?.first_name || ''} ${message.author?.last_name || ''}`
         );
         console.log(`[Webhook] Message blurb: ${message.blurb}`);
 
