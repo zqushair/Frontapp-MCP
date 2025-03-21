@@ -149,7 +149,7 @@ A complete example of client usage is available in `src/examples/client-usage-ex
 - [x] Implement integration tests
 - [x] Create webhook testing utilities
 - [ ] Set up end-to-end testing
-- [ ] Implement security testing
+- [x] Implement security testing
 - [ ] Create performance benchmarks
 
 ## Documentation
