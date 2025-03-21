@@ -11,7 +11,7 @@ export class GetInboxesHandler extends BaseRequestHandler<GetInboxesArguments> {
    * Validate the arguments passed to the tool
    * @param args The arguments to validate
    */
-  protected validateArgs(args: GetInboxesArguments): void {
+  protected validateArgs(_args: GetInboxesArguments): void {
     // No required arguments for this tool
   }
 
@@ -23,15 +23,19 @@ export class GetInboxesHandler extends BaseRequestHandler<GetInboxesArguments> {
   protected async execute(args: GetInboxesArguments): Promise<ToolResponse> {
     // Extract pagination parameters
     const { limit, page_token } = args;
-    
+
     // Prepare parameters for the Frontapp API
     const params: Record<string, any> = {};
-    if (limit) params.limit = limit;
-    if (page_token) params.page_token = page_token;
-    
+    if (limit) {
+      params.limit = limit;
+    }
+    if (page_token) {
+      params.page_token = page_token;
+    }
+
     // Call the Frontapp API
     const response = await frontappClient.getInboxes(params);
-    
+
     // Return the response
     return this.createSuccessResponse(response.data);
   }
