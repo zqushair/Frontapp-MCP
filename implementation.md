@@ -6,7 +6,7 @@ This document outlines the step-by-step implementation plan for the Frontapp MCP
 
 - [x] Initialize project repository
 - [x] Set up TypeScript configuration
-- [ ] Configure linting and formatting tools
+- [x] Configure linting and formatting tools
 - [x] Set up testing framework
 - [x] Create basic project structure
 - [x] Set up environment configuration
