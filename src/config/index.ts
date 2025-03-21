@@ -17,14 +17,13 @@ export const config = {
   },
   logging: {
     level: process.env.LOG_LEVEL || 'info',
+    metricsInterval: parseInt(process.env.METRICS_INTERVAL || '60000', 10),
   },
 };
 
 // Validate required configuration
 export function validateConfig(): void {
-  const requiredVars = [
-    { key: 'FRONTAPP_API_KEY', value: config.frontapp.apiKey },
-  ];
+  const requiredVars = [{ key: 'FRONTAPP_API_KEY', value: config.frontapp.apiKey }];
 
   // Optional for testing, but required for production
   const optionalVars = [

@@ -2,8 +2,9 @@
 import { Server } from '@modelcontextprotocol/sdk/server/index.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import { setupRequestHandlers } from './handlers/requests/index.js';
-import { setupWebhookHandlers } from './handlers/webhooks/index.js';
 import { config, validateConfig } from './config/index.js';
+import logger from './utils/logger.js';
+import { startApiServer } from './api/index.js';
 
 /**
  * Main entry point for the Frontapp MCP server
@@ -12,9 +13,9 @@ async function main() {
   try {
     // Validate the configuration
     validateConfig();
-    
-    console.log('Starting Frontapp MCP server...');
-    
+
+    logger.info('Starting Frontapp MCP server...');
+
     // Create the MCP server
     const server = new Server(
       {
@@ -27,31 +28,44 @@ async function main() {
         },
       }
     );
-    
+
     // Set up request handlers
     setupRequestHandlers(server);
-    
+
     // Set up error handling
     server.onerror = (error) => {
-      console.error('[MCP Error]', error);
+      logger.error('[MCP Error]', error);
     };
-    
+
     // Connect to the transport
     const transport = new StdioServerTransport();
     await server.connect(transport);
-    
-    console.log('Frontapp MCP server connected to transport');
-    
-    // Set up webhook server if webhook configuration is provided
+
+    logger.info('Frontapp MCP server connected to transport');
+
+    // Start the API server if webhook configuration is provided
     if (config.webhook.baseUrl && config.webhook.secret) {
-      setupWebhookHandlers(server);
+      const apiServer = startApiServer(server);
+      logger.info(`API server started on port ${config.server.port}`);
+      
+      // Handle graceful shutdown
+      process.on('SIGTERM', () => {
+        logger.info('SIGTERM received, shutting down API server');
+        apiServer.close(() => {
+          logger.info('API server closed');
+        });
+      });
+    } else {
+      logger.warn('Webhook configuration not provided. API server not started.');
     }
   } catch (error: any) {
-    console.error('Failed to start Frontapp MCP server:', error.message);
+    logger.error('Failed to start Frontapp MCP server:', { error: error.message, stack: error.stack });
     process.exit(1);
   }
 }
 
-
 // Start the server
-main().catch(console.error);
+main().catch((error) => {
+  logger.error('Unhandled error in main function', { error });
+  process.exit(1);
+});
