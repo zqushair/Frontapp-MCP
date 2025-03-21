@@ -33,9 +33,9 @@ This document outlines the step-by-step implementation plan for the Frontapp MCP
 
 - [x] Define MCP request/response models
 - [x] Create Frontapp data models (conversations, messages, contacts, accounts, etc.)
-- [ ] Implement data validation
+- [x] Implement data validation
 - [x] Create webhook payload models
-- [ ] Implement data transformation utilities
+- [x] Implement data transformation utilities
 
 ## Request Handlers
 
