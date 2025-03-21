@@ -84,7 +84,7 @@ This document outlines the step-by-step implementation plan for the Frontapp MCP
 - [x] Implement contact webhook handlers:
   - [x] ContactCreatedHandler
   - [x] ContactUpdatedHandler
-- [ ] Set up webhook subscription management
+- [x] Set up webhook subscription management
 
 ## Security Implementation
 

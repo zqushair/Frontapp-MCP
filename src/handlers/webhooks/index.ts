@@ -3,6 +3,8 @@ import express, { Request, Response } from 'express';
 import { WebhookEventType } from '../../models/frontapp.js';
 import { config } from '../../config/index.js';
 import { captureRawBody, verifyWebhookSignature } from '../../middleware/webhookAuth.js';
+import { webhookSubscriptionManager } from '../../utils/webhookSubscription.js';
+import logger from '../../utils/logger.js';
 
 // Import conversation webhook handlers
 import { conversationCreatedHandler } from './conversations/conversationCreated.js';
@@ -113,5 +115,35 @@ export function setupWebhookHandlers(server: Server): void {
     console.log(`Webhook URL: ${config.webhook.baseUrl}/webhooks`);
   });
 
-  console.log('Webhook handlers set up successfully');
+  // Initialize webhook subscriptions
+  initializeWebhookSubscriptions().catch((error) => {
+    logger.error('Failed to initialize webhook subscriptions', {
+      error: error.message,
+      stack: error.stack,
+    });
+  });
+
+  logger.info('Webhook handlers set up successfully');
+}
+
+/**
+ * Initialize webhook subscriptions
+ * This function subscribes to all webhook events in Frontapp
+ */
+async function initializeWebhookSubscriptions(): Promise<void> {
+  try {
+    // Initialize the webhook subscription manager
+    await webhookSubscriptionManager.initialize();
+    
+    // Subscribe to all webhook events
+    await webhookSubscriptionManager.subscribeAll();
+    
+    logger.info('Webhook subscriptions initialized');
+  } catch (error: any) {
+    logger.error('Failed to initialize webhook subscriptions', {
+      error: error.message,
+      stack: error.stack,
+    });
+    throw error;
+  }
 }
