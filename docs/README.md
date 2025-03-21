@@ -8,6 +8,12 @@ Welcome to the documentation for the Frontapp MCP (Model Context Protocol) integ
 - [Installation Guide](installation.md)
 - [API Reference](api-reference.md)
 - [Webhook Integration](webhook-integration.md)
+- [Security Features](#security-features)
+  - [Credential Storage](credential-storage-guide.md)
+  - [HTTPS Setup](https-setup-guide.md)
+  - [Input Validation](input-validation-guide.md)
+  - [Rate Limiting](rate-limiting-guide.md)
+  - [Webhook Validation](webhook-validation-guide.md)
 - [Development Guide](development-guide.md)
 
 ## Introduction
@@ -99,3 +105,37 @@ await client.sendMessage('cnv_123', 'Hello, how can I help you today?', {
 ```
 
 A complete example of client usage is available in `src/examples/client-usage-example.ts`.
+
+## Security Features
+
+The Frontapp MCP integration includes several security features to protect sensitive data and prevent abuse:
+
+### Credential Storage
+
+The integration includes a secure credential storage system that uses AES-256 encryption to store sensitive information like API keys and passwords. This ensures that credentials are protected even if the storage file is compromised.
+
+For detailed information, see the [Credential Storage Guide](credential-storage-guide.md).
+
+### HTTPS Support
+
+The integration supports HTTPS for secure communication between clients and the server. This encrypts the data transmitted between the client and server, protecting it from eavesdropping and tampering.
+
+For detailed information, see the [HTTPS Setup Guide](https-setup-guide.md).
+
+### Input Validation
+
+The integration includes an input validation middleware that validates request data against schemas. This helps ensure that data meets the requirements of the API and prevents invalid data from being processed.
+
+For detailed information, see the [Input Validation Guide](input-validation-guide.md).
+
+### Rate Limiting
+
+The integration includes a rate limiting middleware that limits the number of requests a client can make in a given time window. This helps protect the API from abuse and ensures fair usage of resources.
+
+For detailed information, see the [Rate Limiting Guide](rate-limiting-guide.md).
+
+### Webhook Validation
+
+The integration includes a webhook validation middleware that validates webhook payloads against schemas. This helps ensure that webhook payloads meet the expected structure and prevents invalid data from being processed.
+
+For detailed information, see the [Webhook Validation Guide](webhook-validation-guide.md).
