@@ -64,8 +64,8 @@ export class RateLimitingMiddleware {
    */
   public static createApiRateLimiter() {
     return RateLimitingMiddleware.createRateLimiter({
-      windowMs: config.security.rateLimiting.api.windowMs || 60 * 1000, // 1 minute
-      max: config.security.rateLimiting.api.max || 100, // 100 requests per minute
+      windowMs: config.security.rateLimiting.api?.windowMs || 60 * 1000, // 1 minute
+      max: config.security.rateLimiting.api?.max || 100, // 100 requests per minute
       message: 'Too many API requests, please try again later.',
     });
   }
@@ -76,8 +76,8 @@ export class RateLimitingMiddleware {
    */
   public static createAuthRateLimiter() {
     return RateLimitingMiddleware.createRateLimiter({
-      windowMs: config.security.rateLimiting.auth.windowMs || 15 * 60 * 1000, // 15 minutes
-      max: config.security.rateLimiting.auth.max || 5, // 5 requests per 15 minutes
+      windowMs: config.security.rateLimiting.auth?.windowMs || 15 * 60 * 1000, // 15 minutes
+      max: config.security.rateLimiting.auth?.max || 5, // 5 requests per 15 minutes
       message: 'Too many authentication attempts, please try again later.',
     });
   }
@@ -88,8 +88,8 @@ export class RateLimitingMiddleware {
    */
   public static createWebhookRateLimiter() {
     return RateLimitingMiddleware.createRateLimiter({
-      windowMs: config.security.rateLimiting.webhook.windowMs || 60 * 1000, // 1 minute
-      max: config.security.rateLimiting.webhook.max || 200, // 200 requests per minute
+      windowMs: config.security.rateLimiting.webhook?.windowMs || 60 * 1000, // 1 minute
+      max: config.security.rateLimiting.webhook?.max || 200, // 200 requests per minute
       message: 'Too many webhook requests, please try again later.',
     });
   }

@@ -6,7 +6,7 @@ import logger from '../../src/utils/logger.js';
 
 // Mock express-rate-limit
 jest.mock('express-rate-limit', () => {
-  return jest.fn().mockImplementation((options) => {
+  return jest.fn().mockImplementation((options: any) => {
     return (req: Request, res: Response, next: NextFunction) => {
       // Call the handler if provided
       if (options.handler) {
@@ -70,8 +70,8 @@ describe('Rate Limiting Middleware', () => {
       method: 'GET',
     };
     mockResponse = {
-      status: jest.fn().mockReturnThis(),
-      send: jest.fn().mockReturnThis(),
+      status: jest.fn().mockReturnThis() as any,
+      send: jest.fn().mockReturnThis() as any,
     };
     mockNext = jest.fn();
   });
