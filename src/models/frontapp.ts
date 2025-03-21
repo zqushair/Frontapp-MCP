@@ -3,6 +3,8 @@
  * These interfaces represent the structure of data returned by the Frontapp API
  */
 
+import { CustomFields, MetadataFields, WebhookPayloadData } from './customFields.js';
+
 // Common pagination interface for Frontapp API responses
 export interface FrontappPagination {
   next?: string;
@@ -40,7 +42,7 @@ export interface Conversation {
   last_message?: Message;
   created_at: number;
   is_private: boolean;
-  metadata?: Record<string, any>;
+  metadata?: MetadataFields;
   _links: {
     self: string;
     related: {
@@ -64,7 +66,7 @@ export interface Message {
   author: Author;
   recipients: Recipient[];
   attachments: Attachment[];
-  metadata?: Record<string, any>;
+  metadata?: MetadataFields;
   _links: {
     self: string;
     related: {
@@ -116,7 +118,7 @@ export interface Attachment {
   url: string;
   content_type: string;
   size: number;
-  metadata?: Record<string, any>;
+  metadata?: MetadataFields;
 }
 
 // Contact interface
@@ -129,7 +131,7 @@ export interface Contact {
   links: ContactLink[];
   handles: ContactHandle[];
   groups: string[];
-  custom_fields: Record<string, any>;
+  custom_fields: CustomFields;
   created_at: number;
   updated_at: number;
   _links: {
@@ -178,7 +180,7 @@ export interface Inbox {
   address: string;
   send_as: string;
   type: 'smtp' | 'imap' | 'twilio' | 'custom';
-  custom_fields: Record<string, any>;
+  custom_fields: CustomFields;
   teammates: string[];
   _links: {
     self: string;
@@ -200,7 +202,7 @@ export interface Teammate {
   is_admin: boolean;
   is_available: boolean;
   is_blocked: boolean;
-  custom_fields: Record<string, any>;
+  custom_fields: CustomFields;
   _links: {
     self: string;
     related: {
@@ -250,7 +252,7 @@ export interface Account {
   description?: string;
   domains: string[];
   external_id?: string;
-  custom_fields: Record<string, any>;
+  custom_fields: CustomFields;
   created_at: number;
   updated_at: number;
   _links: {
@@ -266,10 +268,7 @@ export interface Account {
 // Webhook payload interface
 export interface WebhookPayload {
   type: WebhookEventType;
-  payload: {
-    id: string;
-    [key: string]: any;
-  };
+  payload: WebhookPayloadData;
   _links: {
     self: string;
   };

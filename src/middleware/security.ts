@@ -60,10 +60,33 @@ export function apiKeyAuth(req: Request, res: Response, next: NextFunction): voi
   next();
 }
 
+// Configure Helmet options with HSTS
+const helmetOptions = {
+  // Enable HTTP Strict Transport Security with a 1 year max-age
+  // This tells browsers to always use HTTPS for this domain
+  hsts: {
+    // 1 year in seconds
+    maxAge: 31536000,
+    // Include subdomains
+    includeSubDomains: true,
+    // Add to browser preload list (optional)
+    preload: true
+  },
+  // Other Helmet options can be configured here
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"],
+      scriptSrc: ["'self'", "'unsafe-inline'"],
+      styleSrc: ["'self'", "'unsafe-inline'"],
+      imgSrc: ["'self'", "data:"],
+    },
+  },
+};
+
 // Export middleware
 export const securityMiddleware = [
-  // Apply Helmet for security headers
-  helmet(),
+  // Apply Helmet for security headers with HSTS configuration
+  helmet(helmetOptions),
   
   // Apply CORS
   cors(corsOptions),
@@ -71,3 +94,19 @@ export const securityMiddleware = [
   // Apply rate limiting
   apiLimiter,
 ];
+
+// Middleware to redirect HTTP to HTTPS
+export function httpsRedirect(req: Request, res: Response, next: NextFunction): void {
+  // Check if the request is secure or if the X-Forwarded-Proto header is set to https
+  // This is useful when the app is behind a proxy or load balancer
+  const isSecure = req.secure || req.headers['x-forwarded-proto'] === 'https';
+  
+  if (!isSecure && process.env.NODE_ENV === 'production') {
+    // Redirect to HTTPS with 301 (permanent) redirect
+    const httpsUrl = `https://${req.hostname}${req.originalUrl}`;
+    req.logger?.info('Redirecting to HTTPS', { from: req.url, to: httpsUrl });
+    return res.redirect(301, httpsUrl);
+  }
+  
+  next();
+}

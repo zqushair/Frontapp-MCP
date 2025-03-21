@@ -1,5 +1,8 @@
 import { Server } from '@modelcontextprotocol/sdk/server/index.js';
 import { WebhookPayload } from '../../models/frontapp.js';
+import logger from '../../utils/logger.js';
+import ErrorLogger from '../../utils/errorLogger.js';
+import webhookRetryManager from '../../utils/webhookRetry.js';
 
 /**
  * Base interface for all webhook handlers
@@ -35,7 +38,7 @@ export abstract class BaseWebhookHandler implements WebhookHandler {
 
   /**
    * Handle a webhook from Frontapp
-   * This method validates the payload and then processes it
+   * This method validates the payload and then processes it with retry logic
    * @param payload The webhook payload
    * @param server The MCP server instance
    */
@@ -44,11 +47,30 @@ export abstract class BaseWebhookHandler implements WebhookHandler {
       // Validate the payload
       this.validatePayload(payload);
 
-      // Process the payload
-      await this.process(payload, server);
+      // Extract webhook type and ID for logging and retry purposes
+      const webhookType = payload.type || 'unknown';
+      const webhookId = payload.payload?.id || 'unknown';
+
+      // Process the payload with retry logic
+      await webhookRetryManager.executeWithRetry(
+        async () => {
+          await this.process(payload, server);
+        },
+        webhookType,
+        webhookId
+      );
+
+      // Log successful processing
+      logger.info(`Webhook processed successfully`, {
+        type: webhookType,
+        id: webhookId
+      });
     } catch (error: any) {
-      // Log the error
-      console.error(`[Webhook Error] ${error.message}`);
+      // Log the error with the ErrorLogger utility
+      ErrorLogger.logWebhookError(`Failed to process webhook`, error, {
+        type: payload.type,
+        payload: payload.payload
+      });
 
       // Rethrow the error
       throw error;
@@ -61,6 +83,16 @@ export abstract class BaseWebhookHandler implements WebhookHandler {
    * @param payload The webhook payload
    */
   protected logWebhookEvent(type: string, payload: any): void {
-    console.log(`[Webhook] Received ${type} event: ${JSON.stringify(payload)}`);
+    logger.info(`Received webhook event`, {
+      type,
+      id: payload.payload?.id,
+      timestamp: new Date().toISOString()
+    });
+
+    // Log detailed payload at debug level
+    logger.debug(`Webhook payload`, {
+      type,
+      payload: JSON.stringify(payload)
+    });
   }
 }

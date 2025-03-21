@@ -1,6 +1,6 @@
 import { frontappClient } from '../clients/frontapp/index.js';
 import { config } from '../config/index.js';
-import { WebhookEventType } from '../models/frontapp.js';
+import { Webhook, WebhookEventType } from '../models/frontapp.js';
 import logger from './logger.js';
 
 /**
@@ -9,7 +9,7 @@ import logger from './logger.js';
  */
 export class WebhookSubscriptionManager {
   private webhookUrl: string;
-  private webhooks: any[] = [];
+  private webhooks: Webhook[] = [];
   private isInitialized: boolean = false;
 
   constructor() {
@@ -112,7 +112,9 @@ export class WebhookSubscriptionManager {
 
       // Find webhooks that contain the specified events
       for (const webhook of this.webhooks) {
-        const matchingEvents = webhook.events.filter((event: string) => events.includes(event as WebhookEventType));
+        const matchingEvents = webhook.events.filter((event) => 
+          events.includes(event as WebhookEventType)
+        );
         
         if (matchingEvents.length > 0) {
           // Unsubscribe from the webhook
@@ -206,8 +208,10 @@ export class WebhookSubscriptionManager {
    * Get all subscribed webhook events
    * @returns A list of all subscribed webhook events
    */
-  public getSubscribedEvents(): string[] {
-    return this.webhooks.flatMap((webhook) => webhook.events);
+  public getSubscribedEvents(): WebhookEventType[] {
+    return this.webhooks.flatMap((webhook) => 
+      webhook.events.map(event => event as WebhookEventType)
+    );
   }
 }
 

@@ -8,6 +8,9 @@ import axios, {
 } from 'axios';
 import { config } from '../../config/index.js';
 import { setTimeout } from 'timers/promises';
+import logger from '../../utils/logger.js';
+import ErrorLogger from '../../utils/errorLogger.js';
+import cacheManager from '../../utils/cache.js';
 
 // Define types for Frontapp API responses
 export interface FrontappPaginatedResponse<T> {
@@ -26,6 +29,7 @@ export class FrontappClient {
   private rateLimitReset: number = 0; // timestamp when rate limit resets
   private maxRetries: number = 3; // maximum number of retries
   private retryDelay: number = 1000; // initial retry delay in ms
+  private requestTimeout: number = 30000; // default request timeout in ms (30 seconds)
 
   constructor() {
     this.client = axios.create({
@@ -35,11 +39,12 @@ export class FrontappClient {
         'Content-Type': 'application/json',
         Accept: 'application/json',
       },
+      timeout: this.requestTimeout, // Set default request timeout
     });
 
     // Add request interceptor for logging
     this.client.interceptors.request.use((config: InternalAxiosRequestConfig) => {
-      console.log(`[Frontapp API] ${config.method?.toUpperCase()} ${config.url}`);
+      logger.info(`Frontapp API request: ${config.method?.toUpperCase()} ${config.url}`);
       return config;
     });
 
@@ -53,9 +58,12 @@ export class FrontappClient {
       async (error: AxiosError) => {
         // Log the error
         if (error.response) {
-          console.error(
-            `[Frontapp API Error] Status: ${error.response.status}, Message: ${JSON.stringify(error.response.data)}`
-          );
+          ErrorLogger.logClientError(`Frontapp API error`, error, {
+            status: error.response.status,
+            data: error.response.data,
+            url: error.config?.url,
+            method: error.config?.method
+          });
 
           // Handle rate limiting (429 Too Many Requests)
           if (error.response.status === 429) {
@@ -66,7 +74,7 @@ export class FrontappClient {
             const retryAfter = error.response.headers['retry-after'];
             const delayMs = retryAfter ? parseInt(retryAfter) * 1000 : this.rateLimitDelay;
 
-            console.log(`[Rate Limit] Waiting for ${delayMs}ms before retrying`);
+            logger.info(`Rate limit reached, waiting before retrying`, { delayMs });
             await setTimeout(delayMs);
 
             // Retry the request
@@ -80,11 +88,14 @@ export class FrontappClient {
             return this.retryRequest(error);
           }
         } else if (error.request) {
-          console.error(`[Frontapp API Error] No response received: ${error.message}`);
+          ErrorLogger.logClientError(`Frontapp API network error - no response received`, error, {
+            url: error.config?.url,
+            method: error.config?.method
+          });
           // Network errors should be retried
           return this.retryRequest(error);
         } else {
-          console.error(`[Frontapp API Error] ${error.message}`);
+          ErrorLogger.logClientError(`Frontapp API error during request creation`, error);
         }
 
         return Promise.reject(error);
@@ -111,9 +122,12 @@ export class FrontappClient {
         this.rateLimitDelay = Math.ceil(timeUntilReset / (remainingRequests + 1));
         this.rateLimitReset = resetTime;
 
-        console.log(
-          `[Rate Limit] ${remainingRequests} requests remaining, reset in ${timeUntilReset}ms, delay set to ${this.rateLimitDelay}ms`
-        );
+        logger.info(`Rate limit status`, {
+          remainingRequests,
+          timeUntilReset,
+          delayMs: this.rateLimitDelay,
+          resetTime: new Date(this.rateLimitReset).toISOString()
+        });
       }
     }
   }
@@ -137,7 +151,13 @@ export class FrontappClient {
 
       // Calculate delay with exponential backoff
       const delay = this.retryDelay * Math.pow(2, retryCount - 1);
-      console.log(`[Retry] Attempt ${retryCount}/${this.maxRetries} after ${delay}ms`);
+      logger.info(`Retrying failed request`, {
+        attempt: retryCount,
+        maxRetries: this.maxRetries,
+        delayMs: delay,
+        url: error.config.url,
+        method: error.config.method
+      });
 
       // Wait before retrying
       await setTimeout(delay);
@@ -164,7 +184,28 @@ export class FrontappClient {
   public configureRetries(maxRetries: number = 3, retryDelay: number = 1000): void {
     this.maxRetries = maxRetries;
     this.retryDelay = retryDelay;
-    console.log(`[Config] Retries configured: max=${maxRetries}, delay=${retryDelay}ms`);
+    logger.info(`Configured retry settings`, {
+      maxRetries,
+      retryDelayMs: retryDelay
+    });
+  }
+
+  /**
+   * Configure request timeout
+   * @param timeout Timeout in milliseconds
+   */
+  public configureTimeout(timeout: number): void {
+    if (timeout <= 0) {
+      logger.warn(`Invalid timeout value: ${timeout}ms. Using default: ${this.requestTimeout}ms`);
+      return;
+    }
+    
+    this.requestTimeout = timeout;
+    
+    // Update the default timeout for all future requests
+    this.client.defaults.timeout = timeout;
+    
+    logger.info(`Configured request timeout`, { timeoutMs: timeout });
   }
 
   /**
@@ -182,7 +223,7 @@ export class FrontappClient {
       if (now > this.rateLimitReset) {
         this.rateLimitDelay = 0;
       } else {
-        console.log(`[Rate Limit] Waiting for ${this.rateLimitDelay}ms before request`);
+        logger.info(`Applying rate limit delay before request`, { delayMs: this.rateLimitDelay });
         await setTimeout(this.rateLimitDelay);
       }
     }
@@ -267,7 +308,23 @@ export class FrontappClient {
 
   // Tag methods
   async getTags(): Promise<AxiosResponse<FrontappPaginatedResponse<any>>> {
-    return this.rateLimitedRequest(() => this.client.get('/tags'));
+    // Cache key for tags
+    const cacheKey = 'frontapp:tags';
+    
+    // Try to get from cache first
+    const cachedResponse = cacheManager.get<AxiosResponse<FrontappPaginatedResponse<any>>>(cacheKey);
+    if (cachedResponse) {
+      logger.debug('Using cached tags');
+      return cachedResponse;
+    }
+    
+    // If not in cache, fetch from API
+    const response = await this.rateLimitedRequest(() => this.client.get('/tags'));
+    
+    // Cache the response for 1 hour (tags don't change frequently)
+    cacheManager.set(cacheKey, response, 60 * 60 * 1000);
+    
+    return response;
   }
 
   async applyTag(conversationId: string, tagId: string): Promise<AxiosResponse<any>> {
@@ -289,31 +346,137 @@ export class FrontappClient {
   async getInboxes(
     params?: Record<string, any>
   ): Promise<AxiosResponse<FrontappPaginatedResponse<any>>> {
-    return this.rateLimitedRequest(() => this.client.get('/inboxes', { params }));
+    // For requests with params, don't use cache
+    if (params && Object.keys(params).length > 0) {
+      return this.rateLimitedRequest(() => this.client.get('/inboxes', { params }));
+    }
+    
+    // Cache key for inboxes
+    const cacheKey = 'frontapp:inboxes';
+    
+    // Try to get from cache first
+    const cachedResponse = cacheManager.get<AxiosResponse<FrontappPaginatedResponse<any>>>(cacheKey);
+    if (cachedResponse) {
+      logger.debug('Using cached inboxes');
+      return cachedResponse;
+    }
+    
+    // If not in cache, fetch from API
+    const response = await this.rateLimitedRequest(() => this.client.get('/inboxes'));
+    
+    // Cache the response for 1 hour (inboxes don't change frequently)
+    cacheManager.set(cacheKey, response, 60 * 60 * 1000);
+    
+    return response;
   }
 
   async getInbox(inboxId: string): Promise<AxiosResponse<any>> {
-    return this.rateLimitedRequest(() => this.client.get(`/inboxes/${inboxId}`));
+    // Cache key for inbox
+    const cacheKey = `frontapp:inbox:${inboxId}`;
+    
+    // Try to get from cache first
+    const cachedResponse = cacheManager.get<AxiosResponse<any>>(cacheKey);
+    if (cachedResponse) {
+      logger.debug(`Using cached inbox: ${inboxId}`);
+      return cachedResponse;
+    }
+    
+    // If not in cache, fetch from API
+    const response = await this.rateLimitedRequest(() => this.client.get(`/inboxes/${inboxId}`));
+    
+    // Cache the response for 1 hour (inbox details don't change frequently)
+    cacheManager.set(cacheKey, response, 60 * 60 * 1000);
+    
+    return response;
   }
 
   // User methods
   async getTeammates(): Promise<AxiosResponse<FrontappPaginatedResponse<any>>> {
-    return this.rateLimitedRequest(() => this.client.get('/teammates'));
+    // Cache key for teammates
+    const cacheKey = 'frontapp:teammates';
+    
+    // Try to get from cache first
+    const cachedResponse = cacheManager.get<AxiosResponse<FrontappPaginatedResponse<any>>>(cacheKey);
+    if (cachedResponse) {
+      logger.debug('Using cached teammates');
+      return cachedResponse;
+    }
+    
+    // If not in cache, fetch from API
+    const response = await this.rateLimitedRequest(() => this.client.get('/teammates'));
+    
+    // Cache the response for 1 hour (teammates don't change frequently)
+    cacheManager.set(cacheKey, response, 60 * 60 * 1000);
+    
+    return response;
   }
 
   async getTeammate(teammateId: string): Promise<AxiosResponse<any>> {
-    return this.rateLimitedRequest(() => this.client.get(`/teammates/${teammateId}`));
+    // Cache key for teammate
+    const cacheKey = `frontapp:teammate:${teammateId}`;
+    
+    // Try to get from cache first
+    const cachedResponse = cacheManager.get<AxiosResponse<any>>(cacheKey);
+    if (cachedResponse) {
+      logger.debug(`Using cached teammate: ${teammateId}`);
+      return cachedResponse;
+    }
+    
+    // If not in cache, fetch from API
+    const response = await this.rateLimitedRequest(() => this.client.get(`/teammates/${teammateId}`));
+    
+    // Cache the response for 1 hour (teammate details don't change frequently)
+    cacheManager.set(cacheKey, response, 60 * 60 * 1000);
+    
+    return response;
   }
 
   // Account methods
   async getAccounts(
     params?: Record<string, any>
   ): Promise<AxiosResponse<FrontappPaginatedResponse<any>>> {
-    return this.rateLimitedRequest(() => this.client.get('/accounts', { params }));
+    // For requests with params, don't use cache
+    if (params && Object.keys(params).length > 0) {
+      return this.rateLimitedRequest(() => this.client.get('/accounts', { params }));
+    }
+    
+    // Cache key for accounts
+    const cacheKey = 'frontapp:accounts';
+    
+    // Try to get from cache first
+    const cachedResponse = cacheManager.get<AxiosResponse<FrontappPaginatedResponse<any>>>(cacheKey);
+    if (cachedResponse) {
+      logger.debug('Using cached accounts');
+      return cachedResponse;
+    }
+    
+    // If not in cache, fetch from API
+    const response = await this.rateLimitedRequest(() => this.client.get('/accounts'));
+    
+    // Cache the response for 1 hour (accounts don't change frequently)
+    cacheManager.set(cacheKey, response, 60 * 60 * 1000);
+    
+    return response;
   }
 
   async getAccount(accountId: string): Promise<AxiosResponse<any>> {
-    return this.rateLimitedRequest(() => this.client.get(`/accounts/${accountId}`));
+    // Cache key for account
+    const cacheKey = `frontapp:account:${accountId}`;
+    
+    // Try to get from cache first
+    const cachedResponse = cacheManager.get<AxiosResponse<any>>(cacheKey);
+    if (cachedResponse) {
+      logger.debug(`Using cached account: ${accountId}`);
+      return cachedResponse;
+    }
+    
+    // If not in cache, fetch from API
+    const response = await this.rateLimitedRequest(() => this.client.get(`/accounts/${accountId}`));
+    
+    // Cache the response for 1 hour (account details don't change frequently)
+    cacheManager.set(cacheKey, response, 60 * 60 * 1000);
+    
+    return response;
   }
 
   async createAccount(data: any): Promise<AxiosResponse<any>> {
@@ -339,7 +502,23 @@ export class FrontappClient {
   }
 
   async listWebhooks(): Promise<AxiosResponse<FrontappPaginatedResponse<any>>> {
-    return this.rateLimitedRequest(() => this.client.get('/webhooks'));
+    // Cache key for webhooks
+    const cacheKey = 'frontapp:webhooks';
+    
+    // Try to get from cache first
+    const cachedResponse = cacheManager.get<AxiosResponse<FrontappPaginatedResponse<any>>>(cacheKey);
+    if (cachedResponse) {
+      logger.debug('Using cached webhooks');
+      return cachedResponse;
+    }
+    
+    // If not in cache, fetch from API
+    const response = await this.rateLimitedRequest(() => this.client.get('/webhooks'));
+    
+    // Cache the response for 1 hour (webhooks don't change frequently)
+    cacheManager.set(cacheKey, response, 60 * 60 * 1000);
+    
+    return response;
   }
 }
 

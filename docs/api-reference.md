@@ -2,6 +2,8 @@
 
 This document provides detailed information about the available API endpoints in the Frontapp MCP integration.
 
+> **Note:** For detailed examples of request and response payloads, see the [API Examples](api-examples.md) document.
+
 ## Overview
 
 The Frontapp MCP integration exposes a set of tools that can be called by LLMs through the MCP protocol. Each tool corresponds to a specific Frontapp API operation.

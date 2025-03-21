@@ -9,7 +9,7 @@ import {
   requestMetricsMiddleware,
   requestBodyLogger,
 } from '../middleware/requestLogger.js';
-import { securityMiddleware, apiKeyAuth } from '../middleware/security.js';
+import { securityMiddleware, apiKeyAuth, httpsRedirect } from '../middleware/security.js';
 import { setupSwagger } from './swagger.js';
 import { initToolsRouter } from './tools.js';
 import healthRouter from './health.js';
@@ -19,6 +19,8 @@ import { verifyWebhookSignature } from '../middleware/webhookAuth.js';
 const app = express();
 
 // Apply middleware
+// Apply HTTPS redirect first to ensure all traffic uses HTTPS
+app.use(httpsRedirect);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(requestIdMiddleware);

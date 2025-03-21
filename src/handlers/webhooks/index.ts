@@ -5,6 +5,7 @@ import { config } from '../../config/index.js';
 import { captureRawBody, verifyWebhookSignature } from '../../middleware/webhookAuth.js';
 import { webhookSubscriptionManager } from '../../utils/webhookSubscription.js';
 import logger from '../../utils/logger.js';
+import ErrorLogger from '../../utils/errorLogger.js';
 
 // Import conversation webhook handlers
 import { conversationCreatedHandler } from './conversations/conversationCreated.js';
@@ -30,7 +31,7 @@ import { contactUpdatedHandler } from './contacts/contactUpdated.js';
 export function setupWebhookHandlers(server: Server): void {
   // Check if webhook configuration is provided
   if (!config.webhook.baseUrl || !config.webhook.secret) {
-    console.warn('Webhook configuration is missing. Webhook functionality will be disabled.');
+    logger.warn('Webhook configuration is missing. Webhook functionality will be disabled.');
     return;
   }
 
@@ -50,8 +51,14 @@ export function setupWebhookHandlers(server: Server): void {
   app.post('/webhooks', async (req: Request, res: Response) => {
     try {
       const { type, payload } = req.body;
+      const webhookId = payload?.id || 'unknown';
 
-      console.log(`[Webhook] Received ${type} event`);
+      logger.info(`Received webhook event`, {
+        type,
+        id: webhookId,
+        path: req.path,
+        method: req.method
+      });
 
       // Route to appropriate webhook handler based on event type
       switch (type) {
@@ -92,14 +99,24 @@ export function setupWebhookHandlers(server: Server): void {
           break;
 
         default:
-          console.log(`[Webhook] Unhandled event type: ${type}`);
+          logger.warn(`Unhandled webhook event type`, { type, id: webhookId });
       }
 
       // Acknowledge receipt of webhook
       res.status(200).send('OK');
     } catch (error: any) {
-      console.error('[Webhook Error]', error.message);
-      res.status(500).send('Internal Server Error');
+      ErrorLogger.logWebhookError('Error processing webhook', error, {
+        path: req.path,
+        method: req.method,
+        type: req.body?.type,
+        id: req.body?.payload?.id
+      });
+      
+      // Send error response
+      res.status(500).json({
+        error: 'Internal Server Error',
+        message: 'An error occurred while processing the webhook'
+      });
     }
   });
 
@@ -111,8 +128,10 @@ export function setupWebhookHandlers(server: Server): void {
   // Start the server
   const port = config.server.port;
   app.listen(port, () => {
-    console.log(`Webhook server listening on port ${port}`);
-    console.log(`Webhook URL: ${config.webhook.baseUrl}/webhooks`);
+    logger.info(`Webhook server started`, {
+      port,
+      url: `${config.webhook.baseUrl}/webhooks`
+    });
   });
 
   // Initialize webhook subscriptions
