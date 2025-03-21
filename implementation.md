@@ -14,7 +14,7 @@ This document outlines the step-by-step implementation plan for the Frontapp MCP
 ## Core Infrastructure
 
 - [x] Create MCP server base structure
-- [ ] Implement API Gateway
+- [x] Implement API Gateway
 - [x] Set up authentication and authorization system
 - [x] Implement logging and monitoring
 - [x] Create error handling middleware

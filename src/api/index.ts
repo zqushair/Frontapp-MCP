@@ -9,6 +9,9 @@ import {
   requestMetricsMiddleware,
   requestBodyLogger,
 } from '../middleware/requestLogger.js';
+import { securityMiddleware, apiKeyAuth } from '../middleware/security.js';
+import { setupSwagger } from './swagger.js';
+import { initToolsRouter } from './tools.js';
 import healthRouter from './health.js';
 import { verifyWebhookSignature } from '../middleware/webhookAuth.js';
 
@@ -22,12 +25,10 @@ app.use(requestIdMiddleware);
 app.use(httpLogger);
 app.use(requestMetricsMiddleware);
 app.use(requestBodyLogger);
+app.use(securityMiddleware);
 
 // Apply routes
 app.use('/health', healthRouter);
-
-// Webhook route with signature verification
-app.use('/webhooks', verifyWebhookSignature);
 
 // Error handling middleware
 app.use((err: Error, req: Request, res: Response, _next: NextFunction) => {
@@ -65,6 +66,15 @@ export function initApiGateway(mcpServer: Server): express.Application {
     clearInterval(metricsInterval);
     // Close any other resources here
   });
+  
+  // Set up Swagger documentation
+  setupSwagger(app);
+  
+  // Set up API routes
+  app.use('/tools', apiKeyAuth, initToolsRouter(mcpServer));
+  
+  // Webhook route with signature verification
+  app.use('/webhooks', verifyWebhookSignature);
   
   // Set up webhook handlers
   app.post('/webhooks', (req: Request, res: Response) => {
@@ -111,6 +121,7 @@ export function startApiServer(mcpServer: Server): any {
   
   const server = app.listen(port, () => {
     logger.info(`API server listening on port ${port}`);
+    logger.info(`API documentation available at http://localhost:${port}/api-docs`);
   });
   
   return server;

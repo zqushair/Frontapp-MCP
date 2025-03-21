@@ -19,6 +19,12 @@ export const config = {
     level: process.env.LOG_LEVEL || 'info',
     metricsInterval: parseInt(process.env.METRICS_INTERVAL || '60000', 10),
   },
+  api: {
+    apiKey: process.env.API_KEY || '',
+    corsOrigins: process.env.CORS_ORIGINS || '*',
+    rateLimitWindowMs: parseInt(process.env.RATE_LIMIT_WINDOW_MS || '900000', 10), // 15 minutes
+    rateLimitMax: parseInt(process.env.RATE_LIMIT_MAX || '100', 10), // 100 requests per window
+  },
 };
 
 // Validate required configuration
