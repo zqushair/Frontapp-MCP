@@ -30,7 +30,7 @@ describe('Validation Middleware', () => {
   // Create mock request, response, and next function
   let mockRequest: Partial<Request>;
   let mockResponse: Partial<Response>;
-  let mockNext: jest.Mock<NextFunction>;
+  let mockNext: jest.Mock;
 
   beforeEach(() => {
     // Reset all mocks
@@ -45,8 +45,8 @@ describe('Validation Middleware', () => {
       method: 'GET',
     };
     mockResponse = {
-      status: jest.fn().mockReturnThis(),
-      json: jest.fn().mockReturnThis(),
+      status: jest.fn().mockReturnThis() as any,
+      json: jest.fn().mockReturnThis() as any,
     };
     mockNext = jest.fn();
   });
@@ -61,21 +61,24 @@ describe('Validation Middleware', () => {
       };
       (validationUtil.validateWithResult as jest.Mock).mockReturnValue(mockValidationResult);
 
-      // Create a validator function
-      const validator = (value: unknown) => validationUtil.validateObject(value, {
-        required: true,
-        properties: {
-          test: {
-            required: true,
-            validator: (value: unknown) => validationUtil.validateString(value, {
+      // Create a schema
+      const schema = {
+        type: 'object',
+        options: {
+          required: true,
+          properties: {
+            test: {
               required: true,
-            }),
+              validator: (value: unknown) => validationUtil.validateString(value, {
+                required: true,
+              }),
+            },
           },
         },
-      });
+      };
 
       // Call the validate method
-      const result = ValidationMiddleware.validate({ test: 'value' }, validator);
+      const result = ValidationMiddleware.validate(schema);
 
       // Check that validateWithResult was called with the correct arguments
       expect(validationUtil.validateWithResult).toHaveBeenCalledWith({ test: 'value' }, expect.any(Function));
@@ -93,21 +96,24 @@ describe('Validation Middleware', () => {
       };
       (validationUtil.validateWithResult as jest.Mock).mockReturnValue(mockValidationResult);
 
-      // Create a validator function
-      const validator = (value: unknown) => validationUtil.validateObject(value, {
-        required: true,
-        properties: {
-          test: {
-            required: true,
-            validator: (value: unknown) => validationUtil.validateString(value, {
+      // Create a schema
+      const schema = {
+        type: 'object',
+        options: {
+          required: true,
+          properties: {
+            test: {
               required: true,
-            }),
+              validator: (value: unknown) => validationUtil.validateString(value, {
+                required: true,
+              }),
+            },
           },
         },
-      });
+      };
 
       // Call the validate method
-      const result = ValidationMiddleware.validate({}, validator);
+      const result = ValidationMiddleware.validate(schema);
 
       // Check that validateWithResult was called with the correct arguments
       expect(validationUtil.validateWithResult).toHaveBeenCalledWith({}, expect.any(Function));
@@ -130,21 +136,24 @@ describe('Validation Middleware', () => {
       };
       (validationUtil.validateWithResult as jest.Mock).mockReturnValue(mockValidationResult);
 
-      // Create a validator function
-      const validator = (value: unknown) => validationUtil.validateObject(value, {
-        required: true,
-        properties: {
-          test: {
-            required: true,
-            validator: (value: unknown) => validationUtil.validateString(value, {
+      // Create a schema
+      const schema = {
+        type: 'object',
+        options: {
+          required: true,
+          properties: {
+            test: {
               required: true,
-            }),
+              validator: (value: unknown) => validationUtil.validateString(value, {
+                required: true,
+              }),
+            },
           },
         },
-      });
+      };
 
       // Create middleware
-      const middleware = ValidationMiddleware.validateBody(validator);
+      const middleware = ValidationMiddleware.validateBody(schema);
 
       // Call middleware
       middleware(mockRequest as Request, mockResponse as Response, mockNext);
@@ -171,21 +180,24 @@ describe('Validation Middleware', () => {
       };
       (validationUtil.validateWithResult as jest.Mock).mockReturnValue(mockValidationResult);
 
-      // Create a validator function
-      const validator = (value: unknown) => validationUtil.validateObject(value, {
-        required: true,
-        properties: {
-          test: {
-            required: true,
-            validator: (value: unknown) => validationUtil.validateString(value, {
+      // Create a schema
+      const schema = {
+        type: 'object',
+        options: {
+          required: true,
+          properties: {
+            test: {
               required: true,
-            }),
+              validator: (value: unknown) => validationUtil.validateString(value, {
+                required: true,
+              }),
+            },
           },
         },
-      });
+      };
 
       // Create middleware
-      const middleware = ValidationMiddleware.validateBody(validator);
+      const middleware = ValidationMiddleware.validateBody(schema);
 
       // Call middleware
       middleware(mockRequest as Request, mockResponse as Response, mockNext);
@@ -218,21 +230,24 @@ describe('Validation Middleware', () => {
       };
       (validationUtil.validateWithResult as jest.Mock).mockReturnValue(mockValidationResult);
 
-      // Create a validator function
-      const validator = (value: unknown) => validationUtil.validateObject(value, {
-        required: true,
-        properties: {
-          test: {
-            required: true,
-            validator: (value: unknown) => validationUtil.validateString(value, {
+      // Create a schema
+      const schema = {
+        type: 'object',
+        options: {
+          required: true,
+          properties: {
+            test: {
               required: true,
-            }),
+              validator: (value: unknown) => validationUtil.validateString(value, {
+                required: true,
+              }),
+            },
           },
         },
-      });
+      };
 
       // Create middleware
-      const middleware = ValidationMiddleware.validateQuery(validator);
+      const middleware = ValidationMiddleware.validateQuery(schema);
 
       // Call middleware
       middleware(mockRequest as Request, mockResponse as Response, mockNext);
@@ -261,21 +276,24 @@ describe('Validation Middleware', () => {
       };
       (validationUtil.validateWithResult as jest.Mock).mockReturnValue(mockValidationResult);
 
-      // Create a validator function
-      const validator = (value: unknown) => validationUtil.validateObject(value, {
-        required: true,
-        properties: {
-          test: {
-            required: true,
-            validator: (value: unknown) => validationUtil.validateString(value, {
+      // Create a schema
+      const schema = {
+        type: 'object',
+        options: {
+          required: true,
+          properties: {
+            test: {
               required: true,
-            }),
+              validator: (value: unknown) => validationUtil.validateString(value, {
+                required: true,
+              }),
+            },
           },
         },
-      });
+      };
 
       // Create middleware
-      const middleware = ValidationMiddleware.validateParams(validator);
+      const middleware = ValidationMiddleware.validateParams(schema);
 
       // Call middleware
       middleware(mockRequest as Request, mockResponse as Response, mockNext);
@@ -319,46 +337,55 @@ describe('Validation Middleware', () => {
         .mockReturnValueOnce(mockQueryValidationResult)
         .mockReturnValueOnce(mockParamsValidationResult);
 
-      // Create validator functions
-      const bodyValidator = (value: unknown) => validationUtil.validateObject(value, {
-        required: true,
-        properties: {
-          body: {
-            required: true,
-            validator: (value: unknown) => validationUtil.validateString(value, {
+      // Create schemas
+      const bodySchema = {
+        type: 'object',
+        options: {
+          required: true,
+          properties: {
+            body: {
               required: true,
-            }),
+              validator: (value: unknown) => validationUtil.validateString(value, {
+                required: true,
+              }),
+            },
           },
         },
-      });
-      const queryValidator = (value: unknown) => validationUtil.validateObject(value, {
-        required: true,
-        properties: {
-          query: {
-            required: true,
-            validator: (value: unknown) => validationUtil.validateString(value, {
+      };
+      const querySchema = {
+        type: 'object',
+        options: {
+          required: true,
+          properties: {
+            query: {
               required: true,
-            }),
+              validator: (value: unknown) => validationUtil.validateString(value, {
+                required: true,
+              }),
+            },
           },
         },
-      });
-      const paramsValidator = (value: unknown) => validationUtil.validateObject(value, {
-        required: true,
-        properties: {
-          params: {
-            required: true,
-            validator: (value: unknown) => validationUtil.validateString(value, {
+      };
+      const paramsSchema = {
+        type: 'object',
+        options: {
+          required: true,
+          properties: {
+            params: {
               required: true,
-            }),
+              validator: (value: unknown) => validationUtil.validateString(value, {
+                required: true,
+              }),
+            },
           },
         },
-      });
+      };
 
       // Create middleware
       const middleware = ValidationMiddleware.validateAll({
-        body: bodyValidator,
-        query: queryValidator,
-        params: paramsValidator,
+        body: bodySchema,
+        query: querySchema,
+        params: paramsSchema,
       });
 
       // Call middleware
@@ -405,46 +432,55 @@ describe('Validation Middleware', () => {
         .mockReturnValueOnce(mockQueryValidationResult)
         .mockReturnValueOnce(mockParamsValidationResult);
 
-      // Create validator functions
-      const bodyValidator = (value: unknown) => validationUtil.validateObject(value, {
-        required: true,
-        properties: {
-          body: {
-            required: true,
-            validator: (value: unknown) => validationUtil.validateString(value, {
+      // Create schemas
+      const bodySchema = {
+        type: 'object',
+        options: {
+          required: true,
+          properties: {
+            body: {
               required: true,
-            }),
+              validator: (value: unknown) => validationUtil.validateString(value, {
+                required: true,
+              }),
+            },
           },
         },
-      });
-      const queryValidator = (value: unknown) => validationUtil.validateObject(value, {
-        required: true,
-        properties: {
-          query: {
-            required: true,
-            validator: (value: unknown) => validationUtil.validateString(value, {
+      };
+      const querySchema = {
+        type: 'object',
+        options: {
+          required: true,
+          properties: {
+            query: {
               required: true,
-            }),
+              validator: (value: unknown) => validationUtil.validateString(value, {
+                required: true,
+              }),
+            },
           },
         },
-      });
-      const paramsValidator = (value: unknown) => validationUtil.validateObject(value, {
-        required: true,
-        properties: {
-          params: {
-            required: true,
-            validator: (value: unknown) => validationUtil.validateString(value, {
+      };
+      const paramsSchema = {
+        type: 'object',
+        options: {
+          required: true,
+          properties: {
+            params: {
               required: true,
-            }),
+              validator: (value: unknown) => validationUtil.validateString(value, {
+                required: true,
+              }),
+            },
           },
         },
-      });
+      };
 
       // Create middleware
       const middleware = ValidationMiddleware.validateAll({
-        body: bodyValidator,
-        query: queryValidator,
-        params: paramsValidator,
+        body: bodySchema,
+        query: querySchema,
+        params: paramsSchema,
       });
 
       // Call middleware
