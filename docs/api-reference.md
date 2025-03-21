@@ -526,9 +526,39 @@ Some endpoints support pagination. When a paginated response has more results, i
 
 The API uses standard HTTP status codes to indicate the success or failure of a request. In addition, error responses include a descriptive error message to help you troubleshoot the issue.
 
-## Rate Limiting
+## Rate Limiting and Retry Logic
 
-The Frontapp API has rate limits. If you exceed these limits, you will receive a 429 Too Many Requests response. The integration includes retry logic with exponential backoff to handle rate limiting gracefully.
+The Frontapp API has rate limits. If you exceed these limits, you will receive a 429 Too Many Requests response. The integration includes sophisticated rate limiting and retry mechanisms to handle these limitations gracefully:
+
+### Rate Limiting Features
+
+- **Proactive Rate Limit Management**: Monitors rate limit headers from Frontapp API responses
+- **Adaptive Request Timing**: Automatically adjusts request timing when approaching rate limits
+- **Request Distribution**: Spreads remaining requests evenly until rate limit reset
+- **429 Response Handling**: Properly handles "Too Many Requests" responses with appropriate backoff
+
+### Retry Logic
+
+The integration implements a robust retry mechanism with exponential backoff:
+
+- **Automatic Retries**: Failed requests (network errors and server errors) are automatically retried
+- **Exponential Backoff**: Each retry waits longer than the previous one to avoid overwhelming the server
+- **Configurable Parameters**: Maximum retries and initial delay can be configured
+- **Retry Tracking**: Maintains state across retry attempts
+
+### Configuration
+
+The Frontapp API client can be configured with custom retry settings:
+
+```typescript
+// Configure retry settings
+frontappClient.configureRetries(
+  maxRetries = 3,    // Maximum number of retry attempts
+  retryDelay = 1000  // Initial delay in milliseconds
+);
+```
+
+This configuration allows you to fine-tune the retry behavior based on your specific needs.
 
 ## Further Reading
 

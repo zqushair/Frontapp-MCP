@@ -73,11 +73,113 @@ frontapp-mcp/
 
 - **src/index.ts**: The entry point of the application. It sets up the MCP server and webhook server.
 - **src/config/index.ts**: Configuration settings loaded from environment variables.
-- **src/clients/frontapp/index.ts**: The Frontapp API client that handles communication with the Frontapp API.
+- **src/clients/frontapp/index.ts**: The Frontapp API client that handles communication with the Frontapp API, including rate limiting and retry logic.
 - **src/models/**: Data models for the MCP server and Frontapp API.
 - **src/handlers/requests/**: Request handlers for the MCP server.
 - **src/handlers/webhooks/**: Webhook handlers for Frontapp webhooks.
 - **src/middleware/**: Middleware components, such as webhook authentication.
+
+## Rate Limiting and Retry Logic
+
+The Frontapp API client includes sophisticated rate limiting and retry mechanisms to handle API rate limits and transient errors gracefully.
+
+### How Rate Limiting Works
+
+The rate limiting system works by:
+
+1. Monitoring rate limit headers from Frontapp API responses
+2. Calculating appropriate delays based on remaining requests and time until reset
+3. Automatically adding delays before requests when approaching rate limits
+4. Properly handling 429 (Too Many Requests) responses with appropriate backoff
+
+```typescript
+// Example of how rate limiting is implemented
+private updateRateLimitInfo(response: AxiosResponse): void {
+  const remaining = response.headers['x-ratelimit-remaining'];
+  const reset = response.headers['x-ratelimit-reset'];
+  
+  if (remaining && reset) {
+    const remainingRequests = parseInt(remaining);
+    const resetTime = parseInt(reset) * 1000; // Convert to milliseconds
+    
+    // If we're running low on requests, calculate delay to spread remaining requests
+    if (remainingRequests < 10) {
+      const now = Date.now();
+      const timeUntilReset = Math.max(0, resetTime - now);
+      this.rateLimitDelay = Math.ceil(timeUntilReset / (remainingRequests + 1));
+      this.rateLimitReset = resetTime;
+    }
+  }
+}
+```
+
+### Retry Logic Implementation
+
+The retry system uses exponential backoff to handle transient errors:
+
+1. Network errors and server errors (5xx) are automatically retried
+2. Each retry waits longer than the previous one (exponential backoff)
+3. Retry count is tracked in request headers
+4. Maximum retries and initial delay are configurable
+
+```typescript
+// Example of retry logic with exponential backoff
+private async retryRequest(error: AxiosError): Promise<AxiosResponse> {
+  if (!error.config) {
+    return Promise.reject(error);
+  }
+  
+  let retryCount = error.config.headers?.['x-retry-count'] ? 
+    parseInt(error.config.headers['x-retry-count'] as string) : 0;
+  
+  if (retryCount < this.maxRetries) {
+    retryCount++;
+    
+    // Calculate delay with exponential backoff
+    const delay = this.retryDelay * Math.pow(2, retryCount - 1);
+    
+    // Wait before retrying
+    await setTimeout(delay);
+    
+    // Update retry count in headers
+    if (!error.config.headers) {
+      error.config.headers = {} as AxiosRequestHeaders;
+    }
+    error.config.headers['x-retry-count'] = retryCount.toString();
+    
+    // Retry the request
+    return this.client(error.config);
+  }
+  
+  // Max retries reached, reject with original error
+  return Promise.reject(error);
+}
+```
+
+### Using Rate-Limited Requests
+
+All API methods use a `rateLimitedRequest` wrapper to ensure rate limiting is respected:
+
+```typescript
+// Example of using the rate-limited request wrapper
+async getConversations(params?: Record<string, any>): Promise<AxiosResponse<FrontappPaginatedResponse<any>>> {
+  return this.rateLimitedRequest(() => this.client.get('/conversations', { params }));
+}
+```
+
+### Configuring Retry Settings
+
+You can configure the retry behavior using the `configureRetries` method:
+
+```typescript
+// Configure retry settings
+frontappClient.configureRetries(
+  maxRetries = 3,    // Maximum number of retry attempts
+  retryDelay = 1000  // Initial delay in milliseconds
+);
+```
+
+When implementing new API methods, make sure to use the `rateLimitedRequest` wrapper to ensure they benefit from the rate limiting and retry logic.
 
 ## Development Workflow
 
