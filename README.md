@@ -1,3 +1,5 @@
+[![MseeP.ai Security Assessment Badge](https://mseep.net/pr/zqushair-frontapp-mcp-badge.png)](https://mseep.ai/app/zqushair-frontapp-mcp)
+
 # Frontapp MCP Server
 
 [![smithery badge](https://smithery.ai/badge/@zqushair/frontapp-mcp)](https://smithery.ai/server/@zqushair/frontapp-mcp)
