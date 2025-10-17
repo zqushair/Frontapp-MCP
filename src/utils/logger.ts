@@ -1,5 +1,4 @@
 import winston from 'winston';
-import { config } from '../config/index.js';
 import path from 'path';
 import fs from 'fs';
 
@@ -29,7 +28,7 @@ const consoleFormat = winston.format.combine(
 
 // Create the logger
 const logger = winston.createLogger({
-  level: config.logging.level || 'info',
+  level: process.env.LOG_LEVEL || 'info',
   format: logFormat,
   defaultMeta: { service: 'frontapp-mcp' },
   transports: [
