@@ -160,7 +160,7 @@ Each webhook handler is responsible for:
 2. Processing the webhook payload
 3. Updating the MCP server with the relevant information
 
-For more information on webhook handling, see the [Webhook Handling Guide](webhook-handling-guide.md).
+For more information on webhook handling, see the [Webhook Integration Guide](webhook-integration.md).
 
 ## Troubleshooting
 

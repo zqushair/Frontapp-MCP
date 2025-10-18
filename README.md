@@ -6,7 +6,7 @@
 
 A Model Context Protocol (MCP) server for integrating Large Language Models (LLMs) with Frontapp's customer communication platform.
 
-**[📚 View Full Documentation in /docs](/docs/README.md)**
+**[📚 View Full Documentation in /docs](./docs/README.md)**
 
 ## Overview
 
@@ -54,7 +54,7 @@ To install frontapp-mcp for Claude Desktop automatically via [Smithery](https://
 npx -y @smithery/cli install @zqushair/frontapp-mcp --client claude
 ```
 
-For detailed installation instructions, see the [Installation Guide](/docs/installation.md).
+For detailed installation instructions, see the [Installation Guide](./docs/installation.md).
 
 Quick start:
 
@@ -83,21 +83,21 @@ Quick start:
 
 ## Documentation
 
-Comprehensive documentation is available in the [/docs](/docs) directory:
+Comprehensive documentation is available in the [/docs](./docs) directory:
 
-- [📖 Main Documentation](/docs/README.md) - Overview and introduction
-- [🔧 Installation Guide](/docs/installation.md) - Detailed setup instructions
-- [📚 API Reference](/docs/api-reference.md) - Available tools and endpoints
-- [🔔 Webhook Integration](/docs/webhook-integration.md) - Real-time event processing
-- [🔒 Credential Storage Guide](/docs/credential-storage-guide.md) - Secure credential management
-- [🔐 HTTPS Setup Guide](/docs/https-setup-guide.md) - Secure communications setup
-- [💻 Development Guide](/docs/development-guide.md) - Contributing to the project
+- [📖 Main Documentation](./docs/README.md) - Overview and introduction
+- [🔧 Installation Guide](./docs/installation.md) - Detailed setup instructions
+- [📚 API Reference](./docs/api-reference.md) - Available tools and endpoints
+- [🔔 Webhook Integration](./docs/webhook-integration.md) - Real-time event processing
+- [🔒 Credential Storage Guide](./docs/credential-storage-guide.md) - Secure credential management
+- [🔐 HTTPS Setup Guide](./docs/https-setup-guide.md) - Secure communications setup
+- [💻 Development Guide](./docs/development-guide.md) - Contributing to the project
 
 ## Usage
 
 ### API Usage
 
-The Frontapp MCP integration exposes a set of tools that can be called by LLMs through the MCP protocol. For detailed information about the available tools and their parameters, see the [API Reference](/docs/api-reference.md).
+The Frontapp MCP integration exposes a set of tools that can be called by LLMs through the MCP protocol. For detailed information about the available tools and their parameters, see the [API Reference](./docs/api-reference.md).
 
 ### Client Library
 
@@ -126,11 +126,11 @@ A complete example of client usage is available in `src/examples/client-usage-ex
 
 ### Webhook Integration
 
-The integration supports receiving and processing webhooks from Frontapp for real-time event notifications. For detailed information about webhook integration, see the [Webhook Integration Guide](/docs/webhook-integration.md).
+The integration supports receiving and processing webhooks from Frontapp for real-time event notifications. For detailed information about webhook integration, see the [Webhook Integration Guide](./docs/webhook-integration.md).
 
 ## Development
 
-For detailed development information, see the [Development Guide](/docs/development-guide.md).
+For detailed development information, see the [Development Guide](./docs/development-guide.md).
 
 ### Quick Development Commands
 
@@ -174,7 +174,7 @@ docker run -p 3000:3000 --env-file .env frontapp-mcp
 
 If you encounter TypeScript errors during the Docker build process, they need to be fixed before the build can succeed. Common issues include:
 
-1. Type errors in webhook handlers (see the [TypeScript Type Safety](/docs/development-guide.md#typescript-type-safety) section in the Development Guide)
+1. Type errors in webhook handlers (see the [TypeScript Type Safety](./docs/development-guide.md#typescript-type-safety) section in the Development Guide)
 2. Missing type assertions for potentially undefined values
 3. Improper handling of optional properties
 
@@ -197,7 +197,7 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 ## Contributing
 
-Contributions are welcome! Please see the [Development Guide](/docs/development-guide.md) for information on how to contribute to the project.
+Contributions are welcome! Please see the [Development Guide](./docs/development-guide.md) for information on how to contribute to the project.
 
 ## Acknowledgements
 
