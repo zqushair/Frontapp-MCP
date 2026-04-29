@@ -102,6 +102,7 @@ class FrontappMCPServer {
             properties: {
               query: { type: 'string', description: 'Search query (e.g., "tag:urgent status:open")' },
               limit: { type: 'number', description: 'Number of results (max 100, default 50)' },
+              page_token: { type: 'string', description: 'Pagination token from previous response for fetching next page of results' },
             },
             required: ['query'],
           },
@@ -1936,7 +1937,7 @@ class FrontappMCPServer {
             result = await this.getConversation(typedArgs.conversation_id);
             break;
           case 'search_conversations':
-            result = await this.searchConversations(typedArgs.query, typedArgs.limit);
+            result = await this.searchConversations(typedArgs.query, typedArgs.limit, typedArgs.page_token);
             break;
           case 'update_conversation':
             result = await this.updateConversation(typedArgs);
@@ -2430,10 +2431,10 @@ class FrontappMCPServer {
     return response.data;
   }
 
-  private async searchConversations(query: string, limit?: number) {
+  private async searchConversations(query: string, limit?: number, pageToken?: string) {
     const encodedQuery = encodeURIComponent(query);
     const response = await this.axiosInstance.get(`/conversations/search/${encodedQuery}`, {
-      params: { limit },
+      params: { limit, page_token: pageToken },
     });
     return response.data;
   }
