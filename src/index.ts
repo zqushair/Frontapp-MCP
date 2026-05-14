@@ -14,6 +14,7 @@
 
 import { Server } from '@modelcontextprotocol/sdk/server/index.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
+import { StreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/streamableHttp.js';
 import {
   CallToolRequestSchema,
   ListToolsRequestSchema,
@@ -21,6 +22,7 @@ import {
   ReadResourceRequestSchema,
 } from '@modelcontextprotocol/sdk/types.js';
 import axios, { AxiosInstance } from 'axios';
+import express from 'express';
 
 const API_BASE_URL = 'https://api2.frontapp.com';
 
@@ -53,6 +55,10 @@ class FrontappMCPServer {
 
     this.setupHandlers();
     this.setupErrorHandling();
+  }
+
+  async connectTo(transport: any): Promise<void> {
+    await this.server.connect(transport);
   }
 
   private setupErrorHandling(): void {
@@ -3308,5 +3314,73 @@ if (!apiToken) {
   process.exit(1);
 }
 
-const server = new FrontappMCPServer(apiToken);
-server.run().catch(console.error);
+if (process.env.TRANSPORT_MODE === 'stdio') {
+  // Legacy local stdio mode (for Claude Code desktop / Docker wrapper)
+  const server = new FrontappMCPServer(apiToken);
+  server.run().catch(console.error);
+} else {
+  // HTTP server mode — default for remote hosting (Render, Railway, Fly.io, etc.)
+  const port = parseInt(process.env.PORT || '3000', 10);
+  const authToken = process.env.MCP_AUTH_TOKEN;
+
+  const app = express();
+  app.use(express.json());
+
+  // CORS headers required by Claude.ai and other remote MCP clients
+  app.use((_req, res, next) => {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, DELETE, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, mcp-session-id');
+    res.setHeader('Access-Control-Expose-Headers', 'mcp-session-id');
+    if (_req.method === 'OPTIONS') {
+      res.sendStatus(204);
+      return;
+    }
+    next();
+  });
+
+  // Health check — used by Render to verify the service is up
+  app.get('/health', (_req, res) => {
+    res.json({ status: 'ok', service: 'frontapp-mcp-server', version: '1.0.0' });
+  });
+
+  app.get('/', (_req, res) => {
+    res.json({
+      service: 'Frontapp MCP Server',
+      mcp_endpoint: '/mcp',
+      auth_required: authToken ? true : false,
+    });
+  });
+
+  // Optional Bearer token auth — set MCP_AUTH_TOKEN env var to enable
+  const checkAuth = (req: any, res: any, next: any) => {
+    if (!authToken) return next();
+    const auth = req.headers.authorization;
+    if (!auth || auth !== `Bearer ${authToken}`) {
+      res.status(401).json({ error: 'Unauthorized — provide Bearer token in Authorization header' });
+      return;
+    }
+    next();
+  };
+
+  // MCP Streamable HTTP endpoint — handles POST (requests) and GET (SSE stream)
+  app.all('/mcp', checkAuth, async (req: any, res: any) => {
+    try {
+      const mcpInstance = new FrontappMCPServer(apiToken);
+      const transport = new StreamableHTTPServerTransport({ sessionIdGenerator: undefined });
+      await mcpInstance.connectTo(transport);
+      await transport.handleRequest(req, res, req.body);
+    } catch (err: any) {
+      console.error('MCP request error:', err.message);
+      if (!res.headersSent) {
+        res.status(500).json({ error: 'Internal server error' });
+      }
+    }
+  });
+
+  app.listen(port, '0.0.0.0', () => {
+    console.error(`Frontapp MCP server running on port ${port}`);
+    console.error(`MCP endpoint: POST http://0.0.0.0:${port}/mcp`);
+    console.error(`Auth: ${authToken ? 'Bearer token required (MCP_AUTH_TOKEN set)' : 'open — set MCP_AUTH_TOKEN to protect'}`);
+  });
+}
