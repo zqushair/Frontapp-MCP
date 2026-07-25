@@ -1236,9 +1236,9 @@ class FrontappMCPServer {
               to: { type: 'array', items: { type: 'string' }, description: 'Recipients' },
               subject: { type: 'string', description: 'Draft subject' },
               body: { type: 'string', description: 'Draft body' },
-              channel_id: { type: 'string', description: 'Channel ID' },
+              channel_id: { type: 'string', description: 'Channel ID the draft is created in' },
             },
-            required: ['author_id', 'body'],
+            required: ['channel_id', 'body'],
           },
         },
         {
@@ -1261,8 +1261,9 @@ class FrontappMCPServer {
               conversation_id: { type: 'string', description: 'Conversation ID' },
               author_id: { type: 'string', description: 'Teammate ID' },
               body: { type: 'string', description: 'Draft body' },
+              channel_id: { type: 'string', description: 'Channel ID the reply is sent from' },
             },
-            required: ['conversation_id', 'author_id', 'body'],
+            required: ['conversation_id', 'channel_id', 'body'],
           },
         },
         {
@@ -3009,7 +3010,8 @@ class FrontappMCPServer {
 
   // Draft methods
   private async createDraft(params: any) {
-    const response = await this.axiosInstance.post('/drafts', params);
+    const { channel_id, ...data } = params;
+    const response = await this.axiosInstance.post(`/channels/${channel_id}/drafts`, data);
     return response.data;
   }
 
