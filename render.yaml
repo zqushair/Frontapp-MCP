@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: frontapp-mcp-server
+    env: node
+    plan: free
+    region: oregon
+    buildCommand: npm ci && npm run build
+    startCommand: node dist/index.js
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      # Render automatically sets PORT — do not override it here
+      - key: FRONTAPP_API_TOKEN
+        sync: false   # Set this manually in Render dashboard
+      - key: MCP_AUTH_TOKEN
+        sync: false   # Set this manually — used to protect your /mcp endpoint

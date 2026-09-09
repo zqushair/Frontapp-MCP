@@ -41,12 +41,15 @@ RUN addgroup -g 1001 -S mcp && \
 # Switch to non-root user
 USER mcp
 
-# Health check
-HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-    CMD node -e "process.exit(0)" || exit 1
+# Expose HTTP port
+EXPOSE 3000
+
+# HTTP health check against the /health endpoint
+HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
+    CMD wget -qO- http://localhost:3000/health || exit 1
 
 # Set environment variables
 ENV NODE_ENV=production
 
-# Run the MCP server
+# Run the MCP server in HTTP mode (default)
 CMD ["node", "dist/index.js"]
