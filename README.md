@@ -1,8 +1,6 @@
 
 # Frontapp MCP Server
 
-[![smithery badge](https://smithery.ai/badge/@zqushair/frontapp-mcp)](https://smithery.ai/server/@zqushair/frontapp-mcp)
-
 Please go to the official https://dev.frontapp.com/docs/mcp-server and use that instead. 
 
 A Model Context Protocol (MCP) server for integrating Large Language Models (LLMs) with Frontapp's customer communication platform.
